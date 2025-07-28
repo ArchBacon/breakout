@@ -4,8 +4,10 @@
 #include <iostream>
 #include <string>
 
+#include "core/logger.hpp"
 #include "rendering/image.hpp"
 #include "rendering/renderer.hpp"
+#include "core/core.hpp"
 
 namespace engine
 {
@@ -26,7 +28,7 @@ namespace engine
         virtual ~Game() = default;
         
         // Lifecycle
-        virtual void Initialize() { std::cerr << "No game specified.\n"; }
+        virtual void Initialize() {}
         virtual void Tick(float deltaTime) {}
         virtual void Draw() {}
         virtual void Shutdown() {}

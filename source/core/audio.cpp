@@ -1,15 +1,15 @@
 ﻿#include "audio.hpp"
 
-#include <iostream>
-
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio/miniaudio.h>
+
+#include "core.hpp"
 
 engine::Audio::Audio()
 {
     if (ma_engine_init(nullptr, &audioEngine) != MA_SUCCESS)
     {
-        std::cerr << "failed to initialize audio engine";
+        LogEngine->Error("Failed to initialize audio engine");
     }
 }
 

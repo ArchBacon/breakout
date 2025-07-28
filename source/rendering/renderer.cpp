@@ -26,7 +26,7 @@ engine::Image* engine::Renderer::CreateImage(const std::string& image) const
     const auto pixels = stbi_load(image.c_str(), &width, &height, &channels, 4);
     if (pixels == nullptr)
     {
-        std::cerr << "Failed to create image " << image << "\n";
+        LogRenderer->Error("Failed to create image {}", image);
         return nullptr;
     }
 

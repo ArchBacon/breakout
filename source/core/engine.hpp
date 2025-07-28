@@ -55,7 +55,7 @@ namespace engine
             game->Shutdown();
         }
         
-        game = std::move(std::make_unique<T>());
+        game = std::make_unique<T>();
         window->SetTitle(game->config.app_name);
         window->SetIcon(game->config.app_icon);
         window->SetSize(
