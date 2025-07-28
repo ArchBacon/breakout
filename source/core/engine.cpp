@@ -3,6 +3,7 @@
 #include <chrono>
 #include <SDL3/SDL_events.h>
 
+#include "audio.hpp"
 #include "window.hpp"
 
 breakout::Engine Engine;
@@ -10,6 +11,8 @@ breakout::Engine Engine;
 void breakout::Engine::Initialize()
 {
     window = std::make_unique<breakout::Window>(448, 512, "Breakout", "assets/icon.bmp");
+    audio = std::make_unique<breakout::Audio>();
+    audio->SetVolume(0.05f); // Set volume to 5%
 }
 
 void breakout::Engine::Run()

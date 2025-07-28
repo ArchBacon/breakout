@@ -5,10 +5,12 @@
 namespace breakout
 {
     class Window;
+    class Audio;
     
     class Engine
     {
         std::unique_ptr<Window> window {nullptr};
+        std::unique_ptr<Audio> audio {nullptr};
         
         bool running {true};
 
@@ -18,6 +20,7 @@ namespace breakout
         void Shutdown();
 
         [[nodiscard]] Window& Window() const { return *window; }
+        [[nodiscard]] Audio& Audio() const { return *audio; }
     };
 }
 
