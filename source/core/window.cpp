@@ -10,7 +10,7 @@ breakout::Window::Window(
     SDL_Init(SDL_INIT_VIDEO);
 
     // Create Window
-    constexpr SDL_WindowFlags windowFlags = SDL_WINDOW_OPENGL;
+    constexpr SDL_WindowFlags windowFlags = 0;
     window = SDL_CreateWindow(
         name.c_str(),
         static_cast<int>(width),
