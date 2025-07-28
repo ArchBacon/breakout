@@ -1,24 +1,15 @@
 ﻿#include "engine.hpp"
 
 #include <chrono>
-#include <iostream>
-#include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
+
+#include "window.hpp"
 
 breakout::Engine Engine;
 
 void breakout::Engine::Initialize()
 {
-    // Initialize SDL3
-    SDL_Init(SDL_INIT_VIDEO);
-
-    // Create Window
-    constexpr SDL_WindowFlags windowFlags = SDL_WINDOW_OPENGL;
-    window = SDL_CreateWindow("Breakout", 448, 512, windowFlags);
-
-    // Add icon to window
-    SDL_Surface* iconSurface = SDL_LoadBMP("assets/icon.bmp");
-    SDL_SetWindowIcon(window, iconSurface);
-    SDL_DestroySurface(iconSurface);
+    window = std::make_unique<breakout::Window>(448, 512, "Breakout", "assets/icon.bmp");
 }
 
 void breakout::Engine::Run()
@@ -52,6 +43,5 @@ void breakout::Engine::Run()
 
 void breakout::Engine::Shutdown()
 {
-    SDL_DestroyWindow(window);
     SDL_Quit();
 }

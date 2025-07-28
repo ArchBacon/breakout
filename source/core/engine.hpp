@@ -1,18 +1,23 @@
 ﻿#pragma once
 
-#include <SDL3/SDL.h>
+#include <memory>
 
 namespace breakout
 {
+    class Window;
+    
     class Engine
     {
+        std::unique_ptr<Window> window {nullptr};
+        
         bool running {true};
-        SDL_Window* window {nullptr};
 
     public:
         void Initialize();
         void Run();
         void Shutdown();
+
+        [[nodiscard]] Window& Window() const { return *window; }
     };
 }
 
