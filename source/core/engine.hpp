@@ -7,6 +7,11 @@
 #include "game.hpp"
 #include "window.hpp"
 
+namespace engine
+{
+    class FileIO;
+}
+
 namespace breakout
 {
     class Breakout;
@@ -24,6 +29,8 @@ namespace engine
         std::unique_ptr<Window> window {nullptr};
         std::unique_ptr<Audio> audio {nullptr};
         std::unique_ptr<Renderer> renderer {nullptr};
+        std::unique_ptr<FileIO> fileIO {nullptr};
+        
         std::unique_ptr<Game> game {nullptr};
         
         bool running {true};
@@ -42,6 +49,7 @@ namespace engine
         [[nodiscard]] Window& Window() const { return *window; }
         [[nodiscard]] Audio& Audio() const { return *audio; }
         [[nodiscard]] Renderer& Renderer() const { return *renderer; }
+        [[nodiscard]] FileIO& FileIO() const { return *fileIO; }
 
     private:
         void PassInputEventsToGame(const SDL_Event& event);

@@ -1,5 +1,6 @@
 ﻿#include "breakout.hpp"
 
+#include "core/audio.hpp"
 #include "core/engine.hpp"
 
 breakout::Breakout::Breakout()
@@ -15,7 +16,12 @@ breakout::Breakout::Breakout()
 
 void breakout::Breakout::Initialize()
 {
-    background = ::Engine.Renderer().CreateImage("assets/images/background_01.png");    
+    background = ::Engine.Renderer().CreateImage("assets/images/background_01.png");
+    
+    ::Engine.Audio().SetVolume(0.05f);
+    ::Engine.Audio().PlayAudio("assets/audio/round_start.wav");
+
+    LogGame->Error("Breakout Test!");
 }
 
 void breakout::Breakout::Draw()

@@ -4,6 +4,7 @@
 #include <SDL3/SDL_events.h>
 
 #include "audio.hpp"
+#include "fileio.hpp"
 #include "game.hpp"
 #include "window.hpp"
 #include "rendering/image.hpp"
@@ -15,8 +16,8 @@ void engine::Engine::Initialize()
 {
     window = std::make_unique<engine::Window>(400, 300, "engine");
     audio = std::make_unique<engine::Audio>();
-    audio->SetVolume(0.05f); // Set volume to 5%
     renderer = std::make_unique<engine::Renderer>();
+    fileIO = std::make_unique<engine::FileIO>();
     
     StartGame<Game>();
 }

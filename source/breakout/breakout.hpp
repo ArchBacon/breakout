@@ -4,7 +4,7 @@
 
 namespace breakout
 {
-    class Breakout : public engine::Game
+    class Breakout final : public engine::Game
     {
         engine::Image* background {nullptr};
         
