@@ -8,7 +8,7 @@ workspace "Breakout"
     outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
-    include "external/GLM"
+    include "external/spdlog"
     include "external/stb"
     include "external/SDL3"
     include "external/MiniAudio"
@@ -40,7 +40,7 @@ project "Breakout"
 
     links {
         "SDL3.lib",
-        "GLM",
+        "spdlog",
         "stb",
         "MiniAudio",
     }
