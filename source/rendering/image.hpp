@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL.h>
 
-namespace breakout
+namespace engine
 {
     struct Image
     {

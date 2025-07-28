@@ -1,10 +1,9 @@
 ﻿#include "window.hpp"
 
-breakout::Window::Window(
+engine::Window::Window(
     const uint32_t width,
     const uint32_t height,
-    const std::string& name,
-    const std::string& icon
+    const std::string& name
 ) {
     // Initialize SDL3
     SDL_Init(SDL_INIT_VIDEO);
@@ -17,8 +16,20 @@ breakout::Window::Window(
         static_cast<int>(height),
         windowFlags
     );
+}
 
-    // Add icon to window if specified
+engine::Window::~Window()
+{
+    SDL_DestroyWindow(window);
+}
+
+void engine::Window::SetTitle(const std::string& name) const
+{
+    SDL_SetWindowTitle(window, name.c_str());
+}
+
+void engine::Window::SetIcon(const std::string& icon) const
+{
     if (!icon.empty())
     {
         SDL_Surface* iconSurface = SDL_LoadBMP(icon.c_str());
@@ -27,7 +38,8 @@ breakout::Window::Window(
     }
 }
 
-breakout::Window::~Window()
+void engine::Window::SetSize(const uint32_t width, const uint32_t height) const
 {
-    SDL_DestroyWindow(window);
+    SDL_SetWindowSize(window, static_cast<int>(width), static_cast<int>(height));
 }
+

@@ -3,7 +3,7 @@
 #include <string>
 #include <miniaudio/miniaudio.h>
 
-namespace breakout
+namespace engine
 {
     class Audio
     {

@@ -3,7 +3,7 @@
 #include <string>
 #include <SDL3/SDL_render.h>
 
-namespace breakout
+namespace engine
 {
     class Window;
     struct Image;

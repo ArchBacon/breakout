@@ -3,7 +3,7 @@
 #include <string>
 #include <SDL3/SDL.h>
 
-namespace breakout
+namespace engine
 {
     class Window
     {
@@ -12,12 +12,16 @@ namespace breakout
         SDL_Window* window {nullptr};
         
     public:
-        Window(uint32_t width, uint32_t height, const std::string& name, const std::string& icon = {});
+        Window(uint32_t width, uint32_t height, const std::string& name);
         ~Window();
 
         Window(const Window& other) = delete;
         Window &operator=(const Window&) = delete;
         Window(Window&& other) = delete;
         Window& operator=(Window&& other) = delete;
+
+        void SetTitle(const std::string& name) const;
+        void SetIcon(const std::string& icon) const;
+        void SetSize(uint32_t width, uint32_t height) const;
     };
 }

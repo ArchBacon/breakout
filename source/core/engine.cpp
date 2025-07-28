@@ -4,26 +4,27 @@
 #include <SDL3/SDL_events.h>
 
 #include "audio.hpp"
+#include "game.hpp"
 #include "window.hpp"
 #include "rendering/image.hpp"
 #include "rendering/renderer.hpp"
 
-breakout::Engine Engine;
+engine::Engine Engine;
 
-void breakout::Engine::Initialize()
+void engine::Engine::Initialize()
 {
-    window = std::make_unique<breakout::Window>(448, 512, "Breakout", "assets/icon.bmp");
-    audio = std::make_unique<breakout::Audio>();
+    window = std::make_unique<engine::Window>(400, 300, "engine");
+    audio = std::make_unique<engine::Audio>();
     audio->SetVolume(0.05f); // Set volume to 5%
-    renderer = std::make_unique<breakout::Renderer>();
+    renderer = std::make_unique<engine::Renderer>();
+    
+    StartGame<Game>();
 }
 
-void breakout::Engine::Run()
+void engine::Engine::Run()
 {
     auto previousTime = std::chrono::high_resolution_clock::now();
-    SDL_Event event;
-
-    Image* background = renderer->CreateImage("assets/images/background_01.png");
+    SDL_Event event {};
 
     while (running)
     {
@@ -45,17 +46,76 @@ void breakout::Engine::Run()
             {
                 running = false;
             }
+
+            PassInputEventsToGame(event);
         }
 
-        renderer->BeginFrame();
-
-        renderer->Draw(background, 0, 32);
+        // Trigger key every frame while held down
+        for (const auto key : pressedKeys)
+        {
+            game->KeyPressed(key);
+        }
         
+        // Trigger button every frame while held down
+        for (const auto button : pressedButtons)
+        {
+            game->ButtonPressed(button);
+        } 
+
+        game->Tick(deltaTime);
+        
+        renderer->BeginFrame();
+        game->Draw();
         renderer->EndFrame();
     }
 }
 
-void breakout::Engine::Shutdown()
+void engine::Engine::Shutdown()
 {
+    game->Shutdown();
     SDL_Quit();
+}
+
+void engine::Engine::PassInputEventsToGame(const SDL_Event& event)
+{
+    if (event.type == SDL_EVENT_KEY_DOWN)
+    {
+        const uint32_t key = event.key.key;
+        pressedKeys.push_back(key);
+        game->KeyDown(key);
+    }
+            
+    if (event.type == SDL_EVENT_KEY_UP)
+    {
+        const uint32_t key = event.key.key;
+        std::erase(pressedKeys, key);
+        game->KeyUp(key);
+    }
+            
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+    {
+        const uint32_t button = event.button.button;
+        pressedButtons.push_back(button);
+        game->ButtonDown(button);
+    }
+            
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)
+    {
+        const uint32_t button = event.button.button;
+        std::erase(pressedButtons, button);
+        game->ButtonUp(button);
+    }
+
+    if (event.type == SDL_EVENT_MOUSE_WHEEL)
+    {
+        game->MouseWheel(event.wheel.y);
+    }
+
+    if (event.type == SDL_EVENT_MOUSE_MOTION)
+    {
+        game->MouseMove(
+            static_cast<uint32_t>(event.motion.x),
+            static_cast<uint32_t>(event.motion.y)
+        );
+    }
 }

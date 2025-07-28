@@ -10,17 +10,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-breakout::Renderer::Renderer()
+engine::Renderer::Renderer()
 {
     renderer = SDL_CreateRenderer(::Engine.Window().window, nullptr);
 }
 
-breakout::Renderer::~Renderer()
+engine::Renderer::~Renderer()
 {
     SDL_DestroyRenderer(renderer);
 }
 
-breakout::Image* breakout::Renderer::CreateImage(const std::string& image) const
+engine::Image* engine::Renderer::CreateImage(const std::string& image) const
 {
     int channels, width, height;
     const auto pixels = stbi_load(image.c_str(), &width, &height, &channels, 4);
@@ -44,19 +44,19 @@ breakout::Image* breakout::Renderer::CreateImage(const std::string& image) const
     };
 }
 
-void breakout::Renderer::BeginFrame() const
+void engine::Renderer::BeginFrame() const
 {
     // Set the clear color to black
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 }
 
-void breakout::Renderer::EndFrame() const
+void engine::Renderer::EndFrame() const
 {
     SDL_RenderPresent(renderer);
 }
 
-void breakout::Renderer::Draw(Image* image, const int x, const int y)
+void engine::Renderer::Draw(Image* image, const int x, const int y)
 {
     const SDL_FRect dstRect
     {
