@@ -12,6 +12,7 @@ group "Dependencies"
     include "external/stb"
     include "external/SDL3"
     include "external/MiniAudio"
+    include "external/GLM"
 group ""
 
 project "Breakout"
@@ -43,6 +44,7 @@ project "Breakout"
         "spdlog",
         "stb",
         "MiniAudio",
+        "GLM",
     }
 
     postbuildcommands {
