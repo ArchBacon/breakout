@@ -7,6 +7,8 @@ namespace breakout
 {
     class Window
     {
+        friend class Renderer;
+        
         SDL_Window* window {nullptr};
         
     public:

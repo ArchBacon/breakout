@@ -5,6 +5,8 @@
 
 #include "audio.hpp"
 #include "window.hpp"
+#include "rendering/image.hpp"
+#include "rendering/renderer.hpp"
 
 breakout::Engine Engine;
 
@@ -13,12 +15,15 @@ void breakout::Engine::Initialize()
     window = std::make_unique<breakout::Window>(448, 512, "Breakout", "assets/icon.bmp");
     audio = std::make_unique<breakout::Audio>();
     audio->SetVolume(0.05f); // Set volume to 5%
+    renderer = std::make_unique<breakout::Renderer>();
 }
 
 void breakout::Engine::Run()
 {
     auto previousTime = std::chrono::high_resolution_clock::now();
     SDL_Event event;
+
+    Image* background = renderer->CreateImage("assets/images/background_01.png");
 
     while (running)
     {
@@ -41,6 +46,12 @@ void breakout::Engine::Run()
                 running = false;
             }
         }
+
+        renderer->BeginFrame();
+
+        renderer->Draw(background, 0, 32);
+        
+        renderer->EndFrame();
     }
 }
 
