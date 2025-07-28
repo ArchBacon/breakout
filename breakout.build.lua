@@ -44,7 +44,7 @@ project "Breakout"
     }
 
     postbuildcommands {
-        "{COPY} %{wks.location}external/SDL/lib/SDL3.dll %{wks.location}binaries/\"" .. outputdir .. "\"/%{prj.name}",
+        "{COPY} %{wks.location}external/SDL3/lib/SDL3.dll %{wks.location}binaries/\"" .. outputdir .. "\"/%{prj.name}",
         "{COPY} %{wks.location}assets/** %{wks.location}binaries/\"" .. outputdir .. "\"/%{prj.name}/assets",
     }
 
