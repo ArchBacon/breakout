@@ -14,6 +14,8 @@ namespace engine
     
     class Renderer
     {
+        friend class Font;
+        
         SDL_Renderer* renderer {nullptr};
         uint3 clearColor {0, 0, 0};
         

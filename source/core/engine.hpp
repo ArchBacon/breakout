@@ -6,6 +6,7 @@
 
 #include "game.hpp"
 #include "window.hpp"
+#include "rendering/font.hpp"
 
 namespace breakout
 {
@@ -22,6 +23,8 @@ namespace engine
 
     class Engine
     {
+        std::unordered_map<std::string, std::unique_ptr<Font>> fonts {};
+        
         std::unique_ptr<Window> window {nullptr};
         std::unique_ptr<Audio> audio {nullptr};
         std::unique_ptr<Renderer> renderer {nullptr};
@@ -48,6 +51,9 @@ namespace engine
         [[nodiscard]] Audio& Audio() const { return *audio; }
         [[nodiscard]] Renderer& Renderer() const { return *renderer; }
         [[nodiscard]] FileIO& FileIO() const { return *fileIO; }
+
+        template <class T>
+        [[nodiscard]] Font* GetFont();
         
         [[nodiscard]] float DeltaTime() const { return deltaTime; }
         void Shutdown();
@@ -66,6 +72,21 @@ namespace engine
         
         game = std::make_unique<T>();
         game->BeginPlay();
+    }
+
+    template <class T>
+    Font* Engine::GetFont()
+    {
+        const std::string id = typeid(T).name();
+
+        // Return or create and return
+        if (fonts.contains(id))
+        {
+            return fonts[id].get();
+        }
+
+        fonts[id] = std::make_unique<T>();
+        return fonts[id].get();
     }
 }
 
