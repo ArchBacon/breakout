@@ -19,7 +19,7 @@ breakout::Breakout::Breakout()
     // Lower default volume
     Engine.Audio().SetVolume(0.05f);
 
-    ChangeLevel(LevelType::Exit);
+    ChangeLevel(LevelType::MainMenu);
 }
 
 void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
