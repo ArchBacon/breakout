@@ -5,6 +5,7 @@
 #include "core/audio.hpp"
 #include "core/engine.hpp"
 #include "levels/controls.hpp"
+#include "levels/gameplay.hpp"
 
 #include "levels/mainmenu.hpp"
 #include "levels/settings.hpp"
@@ -48,8 +49,8 @@ void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
         level = std::make_unique<Controls>();
         break;
     case LevelType::GamePlay:
-        LogGame->Warn("GamePlay not implemented. Exiting...");
-        return;
+        level = std::make_unique<Gameplay>();
+        break;
     case LevelType::GameOver:
         LogGame->Warn("GameOver not implemented. Exiting...");
         return;
