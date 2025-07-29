@@ -14,10 +14,10 @@ void breakout::MainMenu::BeginPlay()
         Engine.GetFont<ArkanoidFont>()->CreateText("Start Game"),
         [&]() { RequestLevelChange(LevelType::GamePlay); }
     );
-    menu.buttons.emplace_back(
-        Engine.GetFont<ArkanoidFont>()->CreateText("Controls"),
-        [&]() { RequestLevelChange(LevelType::Controls); }
-    );
+    // menu.buttons.emplace_back(
+    //     Engine.GetFont<ArkanoidFont>()->CreateText("Controls"),
+    //     [&]() { RequestLevelChange(LevelType::Controls); }
+    // );
     menu.buttons.emplace_back(
         Engine.GetFont<ArkanoidFont>()->CreateText("Settings"),
         [&]() { RequestLevelChange(LevelType::Settings); }
