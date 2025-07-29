@@ -23,5 +23,6 @@ namespace engine
          * @param volume Percentage of volume between 0.0 and 1.0
          */
         void SetVolume(float volume);
+        [[nodiscard]] float GetVolume();
     };
 }

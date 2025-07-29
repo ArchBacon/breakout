@@ -1,15 +1,12 @@
 ﻿#include "mainmenu.hpp"
 
-#include "breakout/arkanoid_font.hpp"
+#include "breakout/fonts/arkanoid_font.hpp"
 #include "breakout/breakout_gamestate.hpp"
 #include "core/audio.hpp"
 #include "core/engine.hpp"
 
-
 void breakout::MainMenu::BeginPlay()
 {
-    LogGame->Info("MainMenu::BeginPlay()");
-    
     background = Engine.Renderer().CreateImage("assets/images/mainmenu.png");
     
     menu.pointer = Engine.GetFont<ArkanoidFont>()->CreateText(">");

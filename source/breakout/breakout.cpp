@@ -7,6 +7,7 @@
 #include "levels/controls.hpp"
 
 #include "levels/mainmenu.hpp"
+#include "levels/settings.hpp"
 
 breakout::Breakout::Breakout()
 {
@@ -19,7 +20,7 @@ breakout::Breakout::Breakout()
     Engine.Renderer().SetClearColor({0, 0, 0});
 
     // Lower default volume
-    Engine.Audio().SetVolume(0.05f);
+    Engine.Audio().SetVolume(0.2f);
 
     // Update game state to store variables over app lifetime
     Engine.SetGameState<BreakoutGameState>();
@@ -41,8 +42,8 @@ void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
         level = std::make_unique<MainMenu>();
         break;
     case LevelType::Settings:
-        LogGame->Warn("Settings not implemented. Exiting...");
-        return;
+        level = std::make_unique<Settings>();
+        break;
     case LevelType::Controls:
         level = std::make_unique<Controls>();
         break;

@@ -89,14 +89,14 @@ void engine::Engine::Shutdown()
 
 void engine::Engine::PassInputEventsToGame(const SDL_Event& event)
 {
-    if (event.type == SDL_EVENT_KEY_DOWN)
+    if (event.type == SDL_EVENT_KEY_DOWN && !event.key.repeat)
     {
         const uint32_t key = event.key.key;
         pressedKeys.push_back(key);
         game->KeyDown(key);
     }
             
-    if (event.type == SDL_EVENT_KEY_UP)
+    if (event.type == SDL_EVENT_KEY_UP && !event.key.repeat)
     {
         const uint32_t key = event.key.key;
         std::erase(pressedKeys, key);

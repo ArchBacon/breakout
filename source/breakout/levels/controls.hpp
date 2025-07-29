@@ -11,6 +11,7 @@ namespace breakout
     public:
         std::shared_ptr<engine::Image> background {nullptr};
         std::shared_ptr<engine::Image> controls {nullptr};
+        std::shared_ptr<engine::Image> acceptSettings {nullptr};
         Menu menu {};
 
         void BeginPlay() override;

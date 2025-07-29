@@ -28,4 +28,9 @@ void engine::Audio::SetVolume(const float volume)
     ma_engine_set_volume(&audioEngine, volume);
 }
 
+float engine::Audio::GetVolume()
+{
+    return ma_engine_get_volume(&audioEngine);
+}
+
 
