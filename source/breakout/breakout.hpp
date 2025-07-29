@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "game.hpp"
-#include "level.hpp"
+#include "levels/level.hpp"
 
 namespace breakout
 {

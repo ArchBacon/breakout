@@ -1,7 +1,7 @@
 ﻿#include "breakout.hpp"
 
 #include "breakout_gamestate.hpp"
-#include "level.hpp"
+#include "levels/level.hpp"
 #include "core/audio.hpp"
 #include "core/engine.hpp"
 #include "levels/controls.hpp"
@@ -26,7 +26,8 @@ breakout::Breakout::Breakout()
     // Update game state to store variables over app lifetime
     Engine.SetGameState<BreakoutGameState>();
 
-    level = std::make_unique<MainMenu>();
+    // TODO: change back to main menu
+    level = std::make_unique<Gameplay>();
     level->SetLevelChangeCallback([&](const LevelType type) { ChangeLevel(type); });
 }
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <memory>
 
-#include "breakout/level.hpp"
+#include "breakout/levels/level.hpp"
 #include "breakout/menu.hpp"
 
 namespace breakout
