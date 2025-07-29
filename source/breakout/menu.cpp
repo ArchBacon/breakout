@@ -7,9 +7,12 @@ void breakout::Menu::Draw(const int2 location, const int spacing) const
     for (size_t i = 0; i < buttons.size(); i++)
     {
         Engine.Renderer().Draw(buttons[i].first, location + int2{0, spacing} * static_cast<int>(i));
-    } 
-
-    Engine.Renderer().Draw(pointer, location + int2{-spacing, spacing * buttonIndex});
+    }
+    
+    if (pointer)
+    {
+        Engine.Renderer().Draw(pointer, location + int2{-spacing, spacing * buttonIndex});
+    }
 }
 
 void breakout::Menu::Next()
