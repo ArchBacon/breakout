@@ -37,5 +37,5 @@ int breakout::Menu::RecalculatePointerPosition(const int index) const
         return (index + static_cast<int>(buttons.size())) % static_cast<int>(buttons.size());
     }
     
-    return  glm::clamp(index, 0, static_cast<int>(buttons.size()));
+    return  glm::clamp(index, 0, static_cast<int>(buttons.size() - 1));
 }
