@@ -2,6 +2,7 @@
 
 #include "breakout/fonts/arkanoid_font.hpp"
 #include "breakout/fonts/other_font.hpp"
+#include "core/audio.hpp"
 #include "core/engine.hpp"
 
 void breakout::Controls::BeginPlay()
@@ -26,5 +27,6 @@ void breakout::Controls::Draw()
 
 void breakout::Controls::KeyDown(const uint32_t key)
 {
+    Engine.Audio().Play("assets/audio/pickup1.wav");
     RequestLevelChange(LevelType::MainMenu);
 }

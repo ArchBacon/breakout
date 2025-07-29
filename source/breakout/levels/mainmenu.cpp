@@ -46,15 +46,18 @@ void breakout::MainMenu::KeyDown(const uint32_t key)
 {
     if (key == SDLK_S || key == SDLK_DOWN)
     {
+        Engine.Audio().Play("assets/audio/blip3.wav");
         menu.Next();
     }
     if (key == SDLK_W || key == SDLK_UP)
     {
+        Engine.Audio().Play("assets/audio/blip3.wav");
         menu.Prev();
     }
 
     if (key == SDLK_SPACE || key == SDLK_RETURN)
     {
+        Engine.Audio().Play("assets/audio/pickup1.wav");
         menu.Click();
     }
 }

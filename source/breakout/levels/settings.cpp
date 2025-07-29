@@ -34,6 +34,7 @@ void breakout::Settings::KeyDown(const uint32_t key)
 {
     if (key == SDLK_SPACE || key == SDLK_RETURN)
     {
+        Engine.Audio().Play("assets/audio/pickup1.wav");
         RequestLevelChange(LevelType::MainMenu);
         return;
     }
@@ -43,13 +44,15 @@ void breakout::Settings::KeyDown(const uint32_t key)
     if (key == SDLK_D || key == SDLK_RIGHT)
     {
         newVolume += volumeStep;
+        Engine.Audio().SetVolume(glm::clamp(newVolume, 0.0f, 1.0f));
+        volume = Engine.GetFont<ArkanoidFont>()->CreateText(std::format("{:.2f}", Engine.Audio().GetVolume()));
+        Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
     }
     if (key == SDLK_A || key == SDLK_LEFT)
     {
         newVolume -= volumeStep;
+        Engine.Audio().SetVolume(glm::clamp(newVolume, 0.0f, 1.0f));
+        volume = Engine.GetFont<ArkanoidFont>()->CreateText(std::format("{:.2f}", Engine.Audio().GetVolume()));
+        Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
     }
-
-    Engine.Audio().SetVolume(glm::clamp(newVolume, 0.0f, 1.0f));
-    volume = Engine.GetFont<ArkanoidFont>()->CreateText(std::format("{:.2f}", Engine.Audio().GetVolume()));
-    Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
 }
