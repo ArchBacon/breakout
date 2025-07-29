@@ -46,7 +46,6 @@ namespace breakout
         }
 
     protected:
-        template <class T>
         void RequestLevelChange(const LevelType newLevel) const
         {
             levelChangeCallback(newLevel);

@@ -19,7 +19,8 @@ breakout::Breakout::Breakout()
     // Lower default volume
     Engine.Audio().SetVolume(0.05f);
 
-    ChangeLevel(LevelType::MainMenu);
+    level = std::make_unique<MainMenu>();
+    level->SetLevelChangeCallback([&](const LevelType type) { ChangeLevel(type); });
 }
 
 void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
@@ -36,27 +37,22 @@ void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
         break;
     case LevelType::Settings:
         LogGame->Warn("Settings not implemented. Exiting...");
-        Engine.Shutdown();
-        break;
+        return;
     case LevelType::Controls:
         LogGame->Warn("Controls not implemented. Exiting...");
-        Engine.Shutdown();
-        break;
+        return;
     case LevelType::GamePlay:
         LogGame->Warn("GamePlay not implemented. Exiting...");
-        Engine.Shutdown();
-        break;
+        return;
     case LevelType::GameOver:
         LogGame->Warn("GameOver not implemented. Exiting...");
-        Engine.Shutdown();
-        break;
+        return;
     case LevelType::GameEnd:
         LogGame->Warn("GameEnd not implemented. Exiting...");
-        Engine.Shutdown();
-        break;
+        return;
     case LevelType::Exit:
         Engine.Shutdown();
-        break;
+        return;
     default:;
     }
 
