@@ -18,7 +18,7 @@ engine::Audio::~Audio()
     ma_engine_uninit(&audioEngine);
 }
 
-void engine::Audio::PlayAudio(const std::string& file)
+void engine::Audio::Play(const std::string& file)
 {
     ma_engine_play_sound(&audioEngine, file.c_str(), nullptr);
 }

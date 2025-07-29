@@ -43,3 +43,19 @@ void engine::Window::SetSize(const uint32_t width, const uint32_t height) const
     SDL_SetWindowSize(window, static_cast<int>(width), static_cast<int>(height));
 }
 
+uint32_t engine::Window::Width() const
+{
+    int32_t width {};
+    SDL_GetWindowSize(window, &width, nullptr);
+
+    return width;
+}
+
+uint32_t engine::Window::Height() const
+{
+    int32_t height {};
+    SDL_GetWindowSize(window, nullptr, &height);
+
+    return height;
+}
+

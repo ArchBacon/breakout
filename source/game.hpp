@@ -8,27 +8,17 @@
 #include "rendering/image.hpp"
 #include "rendering/renderer.hpp"
 #include "core/core.hpp"
+#include "core/types.hpp"
 
 namespace engine
 {
-    struct GameConfig
-    {
-        std::string app_name {"Unnamed"};
-        std::string app_icon {""};
-        uint32_t window_width {800};
-        uint32_t window_height {600};
-    };
-    
     class Game
     {
-    public:
-        GameConfig config {};
-        
     public:
         virtual ~Game() = default;
         
         // Lifecycle
-        virtual void Initialize() {}
+        virtual void BeginPlay() {}
         virtual void Tick(float deltaTime) {}
         virtual void Draw() {}
         virtual void Shutdown() {}

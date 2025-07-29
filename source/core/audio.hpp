@@ -18,7 +18,7 @@ namespace engine
         Audio(Audio&& other) = delete;
         Audio& operator=(Audio&& other) = delete;
 
-        void PlayAudio(const std::string& file);
+        void Play(const std::string& file);
         /**
          * @param volume Percentage of volume between 0.0 and 1.0
          */

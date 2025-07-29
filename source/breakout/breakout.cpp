@@ -5,31 +5,69 @@
 
 breakout::Breakout::Breakout()
 {
-    config =
-    {
-        .app_name = "Breakout",
-        .app_icon = "assets/icon.bmp",
-        .window_width = 448,
-        .window_height = 512, 
+    // Configure window properties
+    Engine.Window().SetIcon("assets/icon.bmp");
+    Engine.Window().SetTitle("Breakout");
+    Engine.Window().SetSize(448, 512);
+
+    // Change clear color
+    Engine.Renderer().SetClearColor({25, 26, 69});
+
+    // Lower default volume
+    Engine.Audio().SetVolume(0.05f);
+
+    paddle.location = {
+        224 - paddle.sprites[0]->width / 2,
+        464
     };
+    Ball ball {};
+    ball.location = paddle.location;
+    ball.location.x += (float)paddle.sprites[0]->width / 2.f - (float)ball.sprites[0]->width / 2.f;
+    ball.location.y -= (float)ball.sprites[0]->height;
+    ball.direction = {0, -1};
+    balls.push_back(ball);
+
+    ball.direction = {-0.3, -0.7};
+    balls.push_back(ball);
+
+    ball.direction = {0.3, -0.7};
+    balls.push_back(ball);
 }
 
-void breakout::Breakout::Initialize()
+void breakout::Breakout::BeginPlay()
 {
-    background = ::Engine.Renderer().CreateImage("assets/images/background_01.png");
-    
-    ::Engine.Audio().SetVolume(0.05f);
-    ::Engine.Audio().PlayAudio("assets/audio/round_start.wav");
+    Engine.Audio().Play("assets/audio/round_start.wav");
+}
 
-    LogGame->Error("Breakout Test!");
+void breakout::Breakout::Tick(const float deltaTime)
+{
+    paddle.Update(deltaTime);
+
+    for (auto& ball : balls)
+    {
+        ball.Update(deltaTime);
+    } 
 }
 
 void breakout::Breakout::Draw()
 {
-    ::Engine.Renderer().Draw(background, 0, 32);
+    Engine.Renderer().Draw(paddle.sprites, paddle.location);
+
+    for (auto& ball : balls)
+    {
+        Engine.Renderer().Draw(ball.sprites, ball.location);
+    }
 }
 
-void breakout::Breakout::Shutdown()
+void breakout::Breakout::KeyPressed(const uint32_t key)
 {
-    delete background;
+    if (key == SDLK_A || key == SDLK_LEFT)
+    {
+        paddle.direction = {-1, 0};
+    }
+
+    if (key == SDLK_D || key == SDLK_RIGHT)
+    {
+        paddle.direction = {1, 0};
+    }
 }

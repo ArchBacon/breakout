@@ -7,11 +7,6 @@
 #include "game.hpp"
 #include "window.hpp"
 
-namespace engine
-{
-    class FileIO;
-}
-
 namespace breakout
 {
     class Breakout;
@@ -22,8 +17,9 @@ namespace engine
     class Window;
     class Audio;
     class Renderer;
+    class FileIO;
     class Game;
-    
+
     class Engine
     {
         std::unique_ptr<Window> window {nullptr};
@@ -38,6 +34,8 @@ namespace engine
         std::vector<uint32_t> pressedKeys {};
         std::vector<uint32_t> pressedButtons {};
 
+        float deltaTime {0.0f};
+
     public:
         void Initialize();
         void Run();
@@ -50,6 +48,8 @@ namespace engine
         [[nodiscard]] Audio& Audio() const { return *audio; }
         [[nodiscard]] Renderer& Renderer() const { return *renderer; }
         [[nodiscard]] FileIO& FileIO() const { return *fileIO; }
+        
+        [[nodiscard]] float DeltaTime() const { return deltaTime; }
 
     private:
         void PassInputEventsToGame(const SDL_Event& event);
@@ -64,13 +64,7 @@ namespace engine
         }
         
         game = std::make_unique<T>();
-        window->SetTitle(game->config.app_name);
-        window->SetIcon(game->config.app_icon);
-        window->SetSize(
-            game->config.window_width,
-            game->config.window_height
-        );
-        game->Initialize();
+        game->BeginPlay();
     }
 }
 

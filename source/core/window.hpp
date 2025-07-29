@@ -23,5 +23,8 @@ namespace engine
         void SetTitle(const std::string& name) const;
         void SetIcon(const std::string& icon) const;
         void SetSize(uint32_t width, uint32_t height) const;
+
+        [[nodiscard]] uint32_t Width() const;
+        [[nodiscard]] uint32_t Height() const;
     };
 }

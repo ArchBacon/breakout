@@ -31,9 +31,11 @@ void engine::Engine::Run()
     {
         const auto currentTime = std::chrono::high_resolution_clock::now();
         const float elapsed = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(currentTime - previousTime).count());
-        const float deltaTime = elapsed / 1000000.0f; // time in seconds
+        deltaTime = elapsed / 1000000.0f; // time in seconds
         previousTime = currentTime;
 
+        game->Tick(deltaTime);
+        
         while (SDL_PollEvent(&event))
         {
             // Exit engine on [X] button
@@ -62,8 +64,6 @@ void engine::Engine::Run()
         {
             game->ButtonPressed(button);
         } 
-
-        game->Tick(deltaTime);
         
         renderer->BeginFrame();
         game->Draw();
