@@ -33,7 +33,11 @@ namespace engine
         
         void BeginFrame() const;
         void EndFrame() const;
+        
         void Draw(const std::vector<std::shared_ptr<Image>>& images, int2 location) const;
         void Draw(const std::shared_ptr<Image>& image, int2 location) const;
+
+        void DrawLine(int2 start, int2 end, uint3 color) const;
+        void DrawBox(int2 start, int2 end, uint3 color) const;
     };
 }

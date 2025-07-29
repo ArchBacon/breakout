@@ -87,3 +87,49 @@ void engine::Renderer::Draw(const std::shared_ptr<Image>& image, const int2 loca
     SDL_RenderTexture(renderer, image->texture, nullptr, &dstRect);
 }
 
+void engine::Renderer::DrawLine(const int2 start, const int2 end, const uint3 color) const
+{
+    // convert to floats here, so we don't have to do multiple casts later
+    const float2 startf = start;
+    const float2 endf = end;
+    
+    // Set draw color
+    SDL_SetRenderDrawColor(
+        renderer,
+        static_cast<uint8_t>(color.r),
+        static_cast<uint8_t>(color.g),
+        static_cast<uint8_t>(color.b),
+        SDL_ALPHA_OPAQUE
+    ); 
+
+    // Draw line
+    SDL_RenderLine(renderer, startf.x, startf.y, endf.x, endf.y);
+}
+
+void engine::Renderer::DrawBox(const int2 start, const int2 end, const uint3 color) const
+{
+    // convert to floats here, so we don't have to do multiple casts later
+    const float2 startf = start;
+    const float2 endf = end;
+
+    // Create the four corners of a box
+    const SDL_FPoint points[4]
+    {
+        {startf.x, startf.y},        
+        {endf.x, startf.y},
+        {endf.x, endf.y},
+        {startf.x, endf.y},
+    };
+    
+    // Set draw color
+    SDL_SetRenderDrawColor(
+        renderer,
+        static_cast<uint8_t>(color.r),
+        static_cast<uint8_t>(color.g),
+        static_cast<uint8_t>(color.b),
+        SDL_ALPHA_OPAQUE
+    ); 
+
+    // Draw line
+    SDL_RenderLines(renderer, points, 4);
+}
