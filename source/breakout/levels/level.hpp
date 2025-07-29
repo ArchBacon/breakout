@@ -31,13 +31,13 @@ namespace breakout
         Level& operator=(Level&& other) = delete;
 
         virtual void BeginPlay() {}
-        virtual void Tick(float deltaTime) {}
+        virtual void Tick([[maybe_unused]] float deltaTime) {}
         virtual void Draw() {}
         virtual void Shutdown() {}
         
-        virtual void KeyUp(const uint32_t key) {}
-        virtual void KeyDown(const uint32_t key) {}
-        virtual void KeyPressed(const uint32_t key) {}
+        virtual void KeyUp([[maybe_unused]] const uint32_t key) {}
+        virtual void KeyDown([[maybe_unused]] const uint32_t key) {}
+        virtual void KeyPressed([[maybe_unused]] const uint32_t key) {}
 
     public:
         void SetLevelChangeCallback(const std::function<void(LevelType)>& callback)

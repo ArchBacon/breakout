@@ -19,20 +19,20 @@ namespace engine
         
         // Lifecycle
         virtual void BeginPlay() {}
-        virtual void Tick(float deltaTime) {}
+        virtual void Tick([[maybe_unused]] float deltaTime) {}
         virtual void Draw() {}
         virtual void Shutdown() {}
 
         // Input
-        virtual void KeyUp(const uint32_t key) {}
-        virtual void KeyDown(const uint32_t key) {}
-        virtual void KeyPressed(const uint32_t key) {}
+        virtual void KeyUp([[maybe_unused]] const uint32_t key) {}
+        virtual void KeyDown([[maybe_unused]] const uint32_t key) {}
+        virtual void KeyPressed([[maybe_unused]] const uint32_t key) {}
 
-        virtual void ButtonUp(const uint32_t button) {}
-        virtual void ButtonDown(const uint32_t button) {}
-        virtual void ButtonPressed(const uint32_t button) {}
+        virtual void ButtonUp([[maybe_unused]] const uint32_t button) {}
+        virtual void ButtonDown([[maybe_unused]] const uint32_t button) {}
+        virtual void ButtonPressed([[maybe_unused]] const uint32_t button) {}
 
-        virtual void MouseMove(const uint32_t x, const uint32_t y) {}
-        virtual void MouseWheel(const float y) {}
+        virtual void MouseMove([[maybe_unused]] const uint32_t x, [[maybe_unused]] const uint32_t y) {}
+        virtual void MouseWheel([[maybe_unused]] const float y) {}
     };
 }
