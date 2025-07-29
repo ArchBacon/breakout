@@ -39,7 +39,7 @@ namespace engine
     public:
         void Initialize();
         void Run();
-        void Shutdown();
+        void Cleanup();
 
         template <class T>
         void StartGame();
@@ -50,6 +50,7 @@ namespace engine
         [[nodiscard]] FileIO& FileIO() const { return *fileIO; }
         
         [[nodiscard]] float DeltaTime() const { return deltaTime; }
+        void Shutdown();
 
     private:
         void PassInputEventsToGame(const SDL_Event& event);

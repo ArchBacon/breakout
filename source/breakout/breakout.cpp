@@ -1,7 +1,10 @@
 ﻿#include "breakout.hpp"
 
+#include "level.hpp"
 #include "core/audio.hpp"
 #include "core/engine.hpp"
+
+#include "levels/mainmenu.hpp"
 
 breakout::Breakout::Breakout()
 {
@@ -11,63 +14,52 @@ breakout::Breakout::Breakout()
     Engine.Window().SetSize(448, 512);
 
     // Change clear color
-    Engine.Renderer().SetClearColor({25, 26, 69});
+    Engine.Renderer().SetClearColor({0, 0, 0});
 
     // Lower default volume
     Engine.Audio().SetVolume(0.05f);
 
-    paddle.location = {
-        224 - paddle.sprites[0]->width / 2,
-        464
-    };
-    Ball ball {};
-    ball.location = paddle.location;
-    ball.location.x += (float)paddle.sprites[0]->width / 2.f - (float)ball.sprites[0]->width / 2.f;
-    ball.location.y -= (float)ball.sprites[0]->height;
-    ball.direction = {0, -1};
-    balls.push_back(ball);
-
-    ball.direction = {-0.3, -0.7};
-    balls.push_back(ball);
-
-    ball.direction = {0.3, -0.7};
-    balls.push_back(ball);
+    ChangeLevel(LevelType::Exit);
 }
 
-void breakout::Breakout::BeginPlay()
+void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
 {
-    Engine.Audio().Play("assets/audio/round_start.wav");
-}
-
-void breakout::Breakout::Tick(const float deltaTime)
-{
-    paddle.Update(deltaTime);
-
-    for (auto& ball : balls)
+    if (level)
     {
-        ball.Update(deltaTime);
-    } 
-}
-
-void breakout::Breakout::Draw()
-{
-    Engine.Renderer().Draw(paddle.sprites, paddle.location);
-
-    for (auto& ball : balls)
-    {
-        Engine.Renderer().Draw(ball.sprites, ball.location);
-    }
-}
-
-void breakout::Breakout::KeyPressed(const uint32_t key)
-{
-    if (key == SDLK_A || key == SDLK_LEFT)
-    {
-        paddle.direction = {-1, 0};
+        level->Shutdown();
     }
 
-    if (key == SDLK_D || key == SDLK_RIGHT)
+    switch (newLevelType)
     {
-        paddle.direction = {1, 0};
+    case LevelType::MainMenu:
+        level = std::make_unique<MainMenu>();
+        break;
+    case LevelType::Settings:
+        LogGame->Warn("Settings not implemented. Exiting...");
+        Engine.Shutdown();
+        break;
+    case LevelType::Controls:
+        LogGame->Warn("Controls not implemented. Exiting...");
+        Engine.Shutdown();
+        break;
+    case LevelType::GamePlay:
+        LogGame->Warn("GamePlay not implemented. Exiting...");
+        Engine.Shutdown();
+        break;
+    case LevelType::GameOver:
+        LogGame->Warn("GameOver not implemented. Exiting...");
+        Engine.Shutdown();
+        break;
+    case LevelType::GameEnd:
+        LogGame->Warn("GameEnd not implemented. Exiting...");
+        Engine.Shutdown();
+        break;
+    case LevelType::Exit:
+        Engine.Shutdown();
+        break;
+    default:;
     }
+
+    level->SetLevelChangeCallback([&](const LevelType type) { ChangeLevel(type); });
+    level->BeginPlay();
 }

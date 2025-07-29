@@ -6,7 +6,7 @@ int main(int /*argc*/, char* /*argv[]*/)
     Engine.Initialize();
     Engine.StartGame<breakout::Breakout>();
     Engine.Run();
-    Engine.Shutdown();
+    Engine.Cleanup();
 
     return 0;
 }

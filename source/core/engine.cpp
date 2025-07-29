@@ -41,13 +41,13 @@ void engine::Engine::Run()
             // Exit engine on [X] button
             if (event.type == SDL_EVENT_QUIT)
             {
-                running = false;
+                Shutdown();
             }
 
             // Exit engine when [ESC] is pressed
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE)
             {
-                running = false;
+                Shutdown();
             }
 
             PassInputEventsToGame(event);
@@ -71,10 +71,20 @@ void engine::Engine::Run()
     }
 }
 
-void engine::Engine::Shutdown()
+void engine::Engine::Cleanup()
 {
+    if (running)
+    {
+        LogEngine->Warn("Engine not exited gracefully.");
+    }
+    
     game->Shutdown();
     SDL_Quit();
+}
+
+void engine::Engine::Shutdown()
+{
+    running = false;
 }
 
 void engine::Engine::PassInputEventsToGame(const SDL_Event& event)
