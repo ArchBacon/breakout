@@ -113,12 +113,13 @@ void engine::Renderer::DrawBox(const int2 start, const int2 end, const uint3 col
     const float2 endf = end;
 
     // Create the four corners of a box
-    const SDL_FPoint points[4]
+    const SDL_FPoint points[5]
     {
         {startf.x, startf.y},        
         {endf.x, startf.y},
         {endf.x, endf.y},
         {startf.x, endf.y},
+        {startf.x, startf.y},
     };
     
     // Set draw color
@@ -131,5 +132,5 @@ void engine::Renderer::DrawBox(const int2 start, const int2 end, const uint3 col
     ); 
 
     // Draw line
-    SDL_RenderLines(renderer, points, 4);
+    SDL_RenderLines(renderer, points, 5);
 }
