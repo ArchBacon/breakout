@@ -10,5 +10,11 @@ namespace breakout
         bool firstTimeOnMainMenu {true};
         uint32_t score {0};
         uint8_t stage {1};
+
+        void Reset()
+        {
+            score = 0;
+            stage = 1;
+        }
     };
 }

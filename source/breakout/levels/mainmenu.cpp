@@ -11,13 +11,13 @@ void breakout::MainMenu::BeginPlay()
     
     menu.pointer = Engine.GetFont<ArkanoidFont>()->CreateText(">");
     menu.buttons.emplace_back(
-        Engine.GetFont<ArkanoidFont>()->CreateText("Start Game"),
-        [&]() { RequestLevelChange(LevelType::GamePlay); }
+        Engine.GetFont<ArkanoidFont>()->CreateText("New Game"),
+        [&]()
+        {
+            Engine.GameState<BreakoutGameState>().Reset();
+            RequestLevelChange(LevelType::GamePlay);
+        }
     );
-    // menu.buttons.emplace_back(
-    //     Engine.GetFont<ArkanoidFont>()->CreateText("Controls"),
-    //     [&]() { RequestLevelChange(LevelType::Controls); }
-    // );
     menu.buttons.emplace_back(
         Engine.GetFont<ArkanoidFont>()->CreateText("Settings"),
         [&]() { RequestLevelChange(LevelType::Settings); }

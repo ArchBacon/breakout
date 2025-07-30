@@ -1,5 +1,7 @@
 ﻿#include "gameplay.hpp"
 
+#include <filesystem>
+
 #include "breakout/breakout_gamestate.hpp"
 #include "breakout/fonts/other_font.hpp"
 #include "breakout/fonts/other_font_alt.hpp"
@@ -9,6 +11,16 @@
 
 void breakout::Gameplay::BeginPlay()
 {
+    stageCount = 0;
+    const std::filesystem::path stageDirectory = "assets/stages";
+    if (std::filesystem::exists(stageDirectory) && std::filesystem::is_directory(stageDirectory)) {
+        for (const auto& entry : std::filesystem::directory_iterator(stageDirectory)) {
+            if (std::filesystem::is_regular_file(entry.status())) {
+                stageCount++;
+            }
+        }
+    }
+    
     GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear);
 
     gameOverText = Engine.GetFont<ArkanoidFont>()->CreateText("Game Over");
