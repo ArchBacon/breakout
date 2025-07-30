@@ -73,7 +73,7 @@ breakout::PowerSlow::PowerSlow(std::vector<Ball>& balls)
 {
     PopulateSprites<PowerSlowFont>();
     type = PowerUpType::Slow;
-    duration = 2.0f;
+    duration = 5.0f;
     internalBeginCallback = [&]()
     {
         for (auto& ball : balls)
