@@ -27,7 +27,7 @@ namespace breakout
         std::vector<Brick*> bricks {};
         int bricksToClear {0};
 
-        std::vector<std::shared_ptr<PowerUp>> powerups {};
+        std::vector<std::unique_ptr<PowerUp>> powerups {};
         
         std::shared_ptr<engine::Image> scoreText {nullptr};
         std::shared_ptr<engine::Image> score {nullptr};

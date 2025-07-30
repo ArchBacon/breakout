@@ -9,7 +9,7 @@
 
 void breakout::Gameplay::BeginPlay()
 {
-    GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear);
+    GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear, 1.0f);
 
     stageText = Engine.GetFont<OtherFont>()->CreateText("Stage");
     stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
@@ -40,6 +40,7 @@ void breakout::Gameplay::Tick(const float deltaTime)
 
     for (const auto& powerup : powerups)
     {
+        if (powerup->active || powerup->consumed) continue;
         powerup->Update(deltaTime);
     } 
     
@@ -98,11 +99,9 @@ void breakout::Gameplay::Draw()
     // Draw power ups
     for (const auto& powerup : powerups)
     {
-        if (!powerup->active)
-        {
-            powerup->Animate();
-            Engine.Renderer().Draw(powerup->shadow, powerup->location);
-        }
+        if (powerup->active || powerup->consumed) continue;
+        powerup->Animate();
+        Engine.Renderer().Draw(powerup->shadow, powerup->location);
     }
     
     // Draw ball(s)
@@ -179,7 +178,6 @@ void breakout::Gameplay::OnGameEnded()
 
 void breakout::Gameplay::ReloadStage()
 {
-    // Remove all powerups the lazy way
     powerups.clear();
     
     // Reset balls
@@ -360,9 +358,19 @@ void breakout::Gameplay::HandlePowerUpPaddlePickups()
 {
     for (const auto& powerup : powerups)
     {
-        if (powerup->active) continue; // No need to check for bounds, it's not in the level
+        if (powerup->active || powerup->consumed) continue; // No need to check for bounds, it's not in the level
         if (Bounds::Overlap(powerup->bounds, powerup->location, paddle.bounds, paddle.location))
         {
+            // Look for all currently active powers to deactivate the current active ones
+            for (const auto& pwr : powerups)
+            {
+                if (pwr->active && !pwr->consumed)
+                {
+                    pwr->OnEnd();
+                }
+            } 
+
+            // Pick up the new power
             Engine.GameState<BreakoutGameState>().score += powerup->score;
             score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill((int)Engine.GameState<BreakoutGameState>().score, 5));
             powerup->OnBegin();
@@ -469,16 +477,22 @@ void breakout::Gameplay::HandleBallBrickBounces()
 
 void breakout::Gameplay::SpawnPowerUp(const PowerUpType type, const int2 location)
 {
+    std::unique_ptr<PowerUp> power = nullptr;
+    
     switch (type)
     {
     case PowerUpType::ExtraLife:
-        {
-            const auto power = std::make_shared<PowerExtraLife>(player);
-            power->location = location;
-            power->onBeginCallback = [&]() { lives = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(player.extraLives, 2)); };
-            powerups.push_back(power);
-        }
+        power = std::make_unique<PowerExtraLife>(player);
+        power->onBeginCallback = [&]() { lives = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(player.extraLives, 2)); };
         break;
-    default: break;
+    case PowerUpType::Slow:
+        power = std::make_unique<PowerSlow>(balls);
+        break;
+    case PowerUpType::None:
+    case PowerUpType::MAX__:
+        return;
     }
+    
+    power->location = location;
+    powerups.push_back(std::move(power));
 }

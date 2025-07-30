@@ -12,16 +12,17 @@
 
 namespace breakout
 {
-    struct PowerUp;
+    struct Player;
+    struct Ball;
+    
     template<typename T>
     concept FontType = std::derived_from<T, PowerFont>;
-
-    struct Player;
 
     enum class PowerUpType
     {
         None,
         ExtraLife,
+        Slow,
         MAX__,
     };
     
@@ -40,6 +41,7 @@ namespace breakout
         engine::Timer powerTimer {};
         int animationIndex {0};
         uint8_t score {250};
+        PowerUpType type {PowerUpType::None};
         
     protected:
         std::function<void()> internalBeginCallback {};
@@ -50,12 +52,14 @@ namespace breakout
 
     public:
         bool active {false};
+        bool consumed {false};
         Bounds bounds {};
 
         explicit PowerUp();
+        virtual ~PowerUp();
         
         void OnBegin();
-        void OnEnd() const;
+        void OnEnd();
         void Update(float deltaTime);
         void Animate();
 
@@ -96,5 +100,11 @@ namespace breakout
     struct PowerExtraLife : PowerUp
     {
         PowerExtraLife(Player& player);
+    };
+    
+    // Gain an extra life
+    struct PowerSlow : PowerUp
+    {
+        PowerSlow(std::vector<Ball>& balls);
     };
 }
