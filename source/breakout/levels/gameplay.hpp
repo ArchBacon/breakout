@@ -6,6 +6,7 @@
 #include "breakout/levels/level.hpp"
 #include "breakout/menu.hpp"
 #include "breakout/objects/ball.hpp"
+#include "breakout/objects/brick.hpp"
 #include "breakout/objects/paddle.hpp"
 #include "breakout/objects/player.hpp"
 #include "core/engine.hpp"
@@ -21,6 +22,9 @@ namespace breakout
             Engine.Renderer().CreateImage("assets/images/background_03.png"),
             Engine.Renderer().CreateImage("assets/images/background_04.png"),
         };
+        std::vector<std::unique_ptr<Brick>> bricks {};
+        int bricksToClear {0};
+        
         std::shared_ptr<engine::Image> scoreText {nullptr};
         std::shared_ptr<engine::Image> score {nullptr};
         std::shared_ptr<engine::Image> stageText {nullptr};

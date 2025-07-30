@@ -25,7 +25,7 @@ void breakout::Controls::Draw()
     Engine.Renderer().Draw(acceptSettings, {48, Engine.Window().Height() - acceptSettings->height - 32});
 }
 
-void breakout::Controls::KeyDown(const uint32_t key)
+void breakout::Controls::KeyDown([[maybe_unused]] const uint32_t key)
 {
     Engine.Audio().Play("assets/audio/pickup1.wav");
     RequestLevelChange(LevelType::MainMenu);

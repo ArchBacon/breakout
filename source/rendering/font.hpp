@@ -12,11 +12,11 @@ namespace engine
         std::string characterOrder {};
         std::shared_ptr<Image> fontSheet {nullptr};
         std::unordered_map<char, std::shared_ptr<Image>> characters {};
-        int sheetWidth = 0;
-        int charSize = 0;
+        int charWidth = 0;
+        int charHeight = 0;
 
     public:
-        Font(const std::string& filepath, int width, std::string charOrder);
+        Font(const std::string& filepath, int charsHor, int charsVer, std::string charOrder);
         ~Font() = default;
 
         Font(const Font& other) = delete;

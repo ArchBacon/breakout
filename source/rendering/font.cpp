@@ -4,40 +4,41 @@
 
 engine::Font::Font(
     const std::string& filepath,
-    const int width,
+    const int charsHor,
+    const int charsVer,
     std::string charOrder
 )
-    : characterOrder(std::move(charOrder)), sheetWidth(width)
+    : characterOrder(std::move(charOrder))
 {
     // Load font sheet
     fontSheet = ::Engine.Renderer().CreateImage(filepath);
-    charSize = fontSheet->width / width;
+    charWidth = fontSheet->width / charsHor;
+    charHeight = fontSheet->height / charsVer;
 
     uint16_t index = 0;
     for (char& character : characterOrder)
     {
         const int2 location
         {
-            (index % width) * charSize,
-            (index / width) * charSize,
+            (index % charsHor) * charWidth,
+            (index / charsHor) * charHeight,
         };
-
     
         // Create pixel buffer for this character
-        auto* charPixels = new unsigned char[charSize * charSize * 4];
+        auto* charPixels = new unsigned char[charWidth * charHeight * 4];
 
         // Copy character pixels from font sheet
         CopyPixelSection(
             fontSheet->pixels, charPixels,
             fontSheet->width, fontSheet->height,
-            charSize, charSize,
+            charWidth, charHeight,
             location.x, location.y,
             0, 0,
-            charSize, charSize
+            charWidth, charHeight
         );
 
         // Create image from pixels
-        const auto charImage = CreateImageFromPixels(charPixels, charSize, charSize);
+        const auto charImage = CreateImageFromPixels(charPixels, charWidth, charHeight);
         characters[character] = charImage;
 
         index++;
@@ -48,8 +49,8 @@ std::shared_ptr<engine::Image> engine::Font::CreateText(const std::string& text)
 {
     if (text.empty()) return nullptr;
     
-    const int textWidth = charSize * static_cast<int>(text.size());
-    const int textHeight = charSize;
+    const int textWidth = charWidth * static_cast<int>(text.size());
+    const int textHeight = charHeight;
     
     // Create pixel buffer for the complete text
     auto* textPixels = new unsigned char[textWidth * textHeight * 4](); // Initialize to 0
@@ -65,11 +66,11 @@ std::shared_ptr<engine::Image> engine::Font::CreateText(const std::string& text)
             // Copy character pixels to text buffer
             CopyPixelSection(
                 charImage->pixels, textPixels,
-                charSize, charSize,
+                charWidth, charWidth,
                 textWidth, textHeight,
                 0, 0,
-                charSize * index, 0,
-                charSize, charSize
+                charWidth * index, 0,
+                charWidth, charWidth
             );
         }
         
@@ -109,6 +110,9 @@ std::shared_ptr<engine::Image> engine::Font::CreateImageFromPixels(
     });
 }
 
+/** +--------------------+ */
+/** + Based on AI Answer + */
+/** +--------------------+ */
 void engine::Font::CopyPixelSection(
     const unsigned char* src,
     unsigned char* dst,

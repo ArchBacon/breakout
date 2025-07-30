@@ -10,6 +10,7 @@ namespace breakout
         OtherFont() : Font(
             "assets/font/font_other.png",
             26,
+            2,
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ()/-+\"',.~?;:"
         ) {}
     };

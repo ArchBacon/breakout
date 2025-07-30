@@ -9,7 +9,12 @@
 
 void breakout::Gameplay::BeginPlay()
 {
-    // TODO: Load bricks from stage file
+    GetBricksFromStage(
+        Engine.GameState<BreakoutGameState>().stage,
+        fieldBounds,
+        bricks,
+        bricksToClear
+    );
 
     stageText = Engine.GetFont<OtherFont>()->CreateText("Stage");
     stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
@@ -83,6 +88,12 @@ void breakout::Gameplay::Draw()
     Engine.Renderer().Draw(livesText, {Engine.Window().Width() / 6 * 5 - stageText->width / 2, 6});
     Engine.Renderer().Draw(lives, {Engine.Window().Width() / 6 * 5 - stage->width / 2, 18});
 
+    // Draw bricks
+    for (const auto& brick : bricks)
+    {
+        Engine.Renderer().Draw(brick->sprite, brick->location);
+    } 
+    
     // Draw ball(s)
     for (auto& ball : balls)
     {

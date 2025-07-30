@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <functional>
 #include <string>
 
 namespace engine
@@ -15,6 +16,7 @@ namespace engine
         FileIO(FileIO&& other) = delete;
         FileIO& operator=(FileIO&& other) = delete;
 
-        std::string ReadFile(const std::string& filepath) const;
+        [[nodiscard]] std::string ReadFile(const std::string& filepath) const;
+        void ReadFilePerLine(const std::string& filepath, const std::function<void(std::string, unsigned)>& callback) const;
     };
 }

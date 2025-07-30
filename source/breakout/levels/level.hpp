@@ -40,6 +40,10 @@ namespace breakout
         virtual void KeyPressed([[maybe_unused]] const uint32_t key) {}
 
     public:
+        /** +--------------------+ */
+        /** + callback method is + */
+        /** + Based on AI Answer + */
+        /** +--------------------+ */
         void SetLevelChangeCallback(const std::function<void(LevelType)>& callback)
         {
             levelChangeCallback = callback;
