@@ -28,7 +28,7 @@ namespace breakout
         None,
         ExtraLife,
         Slow,
-        // Break,
+        Break,
         Enlarge,
         MAX__,
     };
@@ -116,10 +116,10 @@ namespace breakout
     };
     
     // Split balls into 3
-    // struct PowerBreak : PowerUp
-    // {
-    //     PowerBreak();
-    // };
+    struct PowerBreak : PowerUp
+    {
+        PowerBreak(std::vector<Ball>& balls);
+    };
     
     // Paddle becomes longer
     struct PowerEnlarge : PowerUp

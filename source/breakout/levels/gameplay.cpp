@@ -554,6 +554,9 @@ void breakout::Gameplay::SpawnPowerUp(const PowerUpType type, const int2 locatio
     case PowerUpType::Enlarge:
         power = std::make_unique<PowerEnlarge>(paddle);
         break;
+    case PowerUpType::Break:
+        power = std::make_unique<PowerBreak>(balls);
+        break;
     case PowerUpType::None:
     case PowerUpType::MAX__:
         return;

@@ -3,6 +3,7 @@
 #include "ball.hpp"
 #include "paddle.hpp"
 #include "player.hpp"
+#include "glm/ext/vector_common.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 
 breakout::PowerUp::PowerUp()
@@ -89,15 +90,44 @@ breakout::PowerSlow::PowerSlow(std::vector<Ball>& balls)
         for (auto& ball : balls)
         {
             ball.speed = 325.f; // Set back to original 
-        } 
+        }
     };
 }
 
-// breakout::PowerBreak::PowerBreak()
-// {
-//     PopulateSprites<PowerBreakFont>();
-//     type = PowerUpType::Break;
-// }
+breakout::PowerBreak::PowerBreak(std::vector<Ball>& balls)
+{
+    PopulateSprites<PowerBreakFont>();
+    type = PowerUpType::Break;
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dis(0, 1);
+    
+    internalBeginCallback = [&]()
+    {
+        // Max 3 balls on the field
+        if (balls.empty() || balls.size() >= 3) return;
+
+        // Pick a random side to shoot out at 30 degrees
+        float angle = dis(gen) == 0 ? -30.0f : 30.0f;
+
+        const int createCount = 3 - static_cast<int>(balls.size());
+        auto reference = balls[0]; // Get the first ball
+        for (int i = 0; i < createCount; i++)
+        {
+            if (i == 1) angle = -angle; // the second ball must go the other way
+            // Limit ball angle to 70degrees to prevent full horizontal moving balls
+            float currentAngle = glm::degrees(glm::acos(glm::dot(reference.direction, glm::vec2(0.0f, 1.0f))));
+            float finalAngle = glm::clamp(currentAngle + angle, -70.f, 70.f);
+            
+            Ball ball {};
+            ball.isAttachedToPaddle = reference.isAttachedToPaddle;
+            ball.location = reference.location;
+            ball.direction = glm::rotate(float2{0, -1}, glm::radians(finalAngle));
+            balls.push_back(ball);
+        }
+    };
+}
 
 breakout::PowerEnlarge::PowerEnlarge(Paddle& paddle)
 {
