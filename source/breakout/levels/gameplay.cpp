@@ -9,7 +9,7 @@
 
 void breakout::Gameplay::BeginPlay()
 {
-    GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear, 1.0f);
+    GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear);
 
     stageText = Engine.GetFont<OtherFont>()->CreateText("Stage");
     stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
