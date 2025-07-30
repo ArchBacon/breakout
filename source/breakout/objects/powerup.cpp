@@ -1,7 +1,9 @@
 #include "powerup.hpp"
 
 #include "ball.hpp"
+#include "paddle.hpp"
 #include "player.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 breakout::PowerUp::PowerUp()
 {
@@ -40,6 +42,7 @@ void breakout::PowerUp::OnEnd()
 void breakout::PowerUp::Update(const float deltaTime)
 {
     location += direction * (speed * deltaTime);
+
     if (!consumed && active && powerTimer.Elapsed() >= duration)
     {
         OnEnd();
@@ -73,7 +76,7 @@ breakout::PowerSlow::PowerSlow(std::vector<Ball>& balls)
 {
     PopulateSprites<PowerSlowFont>();
     type = PowerUpType::Slow;
-    duration = 5.0f;
+    duration = 15.0f;
     internalBeginCallback = [&]()
     {
         for (auto& ball : balls)
@@ -87,5 +90,52 @@ breakout::PowerSlow::PowerSlow(std::vector<Ball>& balls)
         {
             ball.speed = 325.f; // Set back to original 
         } 
+    };
+}
+
+// breakout::PowerBreak::PowerBreak()
+// {
+//     PopulateSprites<PowerBreakFont>();
+//     type = PowerUpType::Break;
+// }
+
+breakout::PowerEnlarge::PowerEnlarge(Paddle& paddle)
+{
+    PopulateSprites<PowerEnlargeFont>();
+    type = PowerUpType::Enlarge;
+    duration = 15.f;
+    ogWidth = paddle.sprites[1]->width;
+    internalBeginCallback = [&]()
+    {
+        active = true; consumed = false;
+        auto shadow = Engine.Renderer().CreateImage("assets/images/paddle_ext_shadow.png");
+        auto paddleExt = Engine.Renderer().CreateImage("assets/images/paddle_ext.png");
+        paddle.location.x -= (float)abs(ogWidth - paddleExt->width) / 2.f; 
+        paddle.sprites = {
+            shadow,
+            paddleExt
+        };
+        paddle.bounds = {
+            .left = 0.0f,
+            .top = 0.0f,
+            .right = static_cast<float>(paddleExt->width),
+            .bottom = static_cast<float>(paddleExt->height)
+        };
+    };
+    internalEndCallback = [&]()
+    {
+        auto shadow = Engine.Renderer().CreateImage("assets/images/paddle_shadow.png");
+        auto paddleExt = Engine.Renderer().CreateImage("assets/images/paddle.png");
+        paddle.location.x += (float)abs(ogWidth - paddleExt->width) / 2.f;
+        paddle.sprites = {
+            shadow,
+            paddleExt
+        };
+        paddle.bounds = {
+            .left = 0.0f,
+            .top = 0.0f,
+            .right = static_cast<float>(paddleExt->width),
+            .bottom = static_cast<float>(paddleExt->height)
+        };
     };
 }

@@ -21,6 +21,7 @@ namespace breakout
         Bounds bounds {};
         bool isAttachedToPaddle {true};
         float2 relAttachlocation = {0.0f, 0.0f};
+        bool pendingKill = false;
         
         Ball();
         

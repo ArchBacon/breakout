@@ -12,6 +12,11 @@
 
 namespace breakout
 {
+    struct Paddle;
+}
+
+namespace breakout
+{
     struct Player;
     struct Ball;
     
@@ -23,6 +28,8 @@ namespace breakout
         None,
         ExtraLife,
         Slow,
+        // Break,
+        Enlarge,
         MAX__,
     };
     
@@ -35,7 +42,7 @@ namespace breakout
         float2 location = {0.0f, 0.0f};
         float2 direction = {0.0f, 1.0f}; // Default direction is straight down
         float speed {100.f};
-        float duration {-1.0f}; // Duration in seconds (-1 for infinite)
+        float duration {0.0f};
         float animationSpeed {8.0f}; // Frames per second
         engine::Timer animationTimer {};
         engine::Timer powerTimer {};
@@ -102,9 +109,22 @@ namespace breakout
         PowerExtraLife(Player& player);
     };
     
-    // Gain an extra life
+    // Slow speed of balls
     struct PowerSlow : PowerUp
     {
         PowerSlow(std::vector<Ball>& balls);
+    };
+    
+    // Split balls into 3
+    // struct PowerBreak : PowerUp
+    // {
+    //     PowerBreak();
+    // };
+    
+    // Paddle becomes longer
+    struct PowerEnlarge : PowerUp
+    {
+        int ogWidth {0};
+        PowerEnlarge(Paddle& paddle);
     };
 }

@@ -12,6 +12,7 @@
 void breakout::Gameplay::BeginPlay()
 {
     stageCount = 0;
+    // Directory search count based on AI answer
     const std::filesystem::path stageDirectory = "assets/stages";
     if (std::filesystem::exists(stageDirectory) && std::filesystem::is_directory(stageDirectory)) {
         for (const auto& entry : std::filesystem::directory_iterator(stageDirectory)) {
@@ -34,12 +35,12 @@ void breakout::Gameplay::BeginPlay()
         Engine.Window().Width() / 2 - gameOverText->width / 2,
         Engine.Window().Height() / 3 * 2
     };
-    scoreEndHeight = Engine.Window().Height() / 2;
+    scoreEndHeight = static_cast<float>(Engine.Window().Height()) / 2.f;
 
     stageText = Engine.GetFont<OtherFont>()->CreateText("Stage");
     stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
     scoreText = Engine.GetFont<OtherFont>()->CreateText("Score");
-    score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill((int)Engine.GameState<BreakoutGameState>().score, 5));
+    score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(static_cast<int>(Engine.GameState<BreakoutGameState>().score), 5));
     livesText = Engine.GetFont<OtherFont>()->CreateText("Lives");
     lives = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(player.extraLives, 2));
 
@@ -74,7 +75,7 @@ void breakout::Gameplay::Tick(const float deltaTime)
 
     for (const auto& powerup : powerups)
     {
-        if (powerup->active || powerup->consumed) continue;
+        if (powerup->active && powerup->consumed) continue;
         powerup->Update(deltaTime);
     } 
     
@@ -434,7 +435,7 @@ void breakout::Gameplay::HandlePowerUpPaddlePickups()
 
             // Pick up the new power
             Engine.GameState<BreakoutGameState>().score += powerup->score;
-            score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill((int)Engine.GameState<BreakoutGameState>().score, 5));
+            score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(static_cast<int>(Engine.GameState<BreakoutGameState>().score), 5));
             powerup->OnBegin();
 
             Engine.Audio().Play("assets/audio/powerup.wav");
@@ -520,7 +521,7 @@ void breakout::Gameplay::HandleBallBrickBounces()
                 SpawnPowerUp(hitBrick->droppedPowerUp, hitBrick->location);
                 
                 Engine.GameState<BreakoutGameState>().score += hitBrick->score;
-                score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill((int)Engine.GameState<BreakoutGameState>().score, 5));
+                score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(static_cast<int>(Engine.GameState<BreakoutGameState>().score), 5));
                 bricksToClear--;
                 
                 // Remove brick (unique_ptr handles deletion automatically)
@@ -549,6 +550,9 @@ void breakout::Gameplay::SpawnPowerUp(const PowerUpType type, const int2 locatio
         break;
     case PowerUpType::Slow:
         power = std::make_unique<PowerSlow>(balls);
+        break;
+    case PowerUpType::Enlarge:
+        power = std::make_unique<PowerEnlarge>(paddle);
         break;
     case PowerUpType::None:
     case PowerUpType::MAX__:

@@ -35,6 +35,10 @@ project "Breakout"
         "external/*/include",
     }
 
+    defines {
+        "GLM_ENABLE_EXPERIMENTAL"
+    }
+
     libdirs {
         "external/SDL3/lib",
     }
