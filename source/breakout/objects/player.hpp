@@ -2,6 +2,9 @@
 
 #include <cstdint>
 
+#include "rendering/image.hpp"
+#include "core/engine.hpp"
+
 namespace breakout
 {
     struct Player

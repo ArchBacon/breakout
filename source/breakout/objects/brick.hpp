@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "breakout/breakout_gamestate.hpp"
+#include "powerup.hpp"
 #include "breakout/collision.hpp"
 #include "breakout/fonts/arkanoid_font.hpp"
 #include "breakout/fonts/brick_font.hpp"
@@ -39,6 +39,7 @@ namespace breakout
         int8_t health {1};
         int2 location {0, 0};
         Bounds bounds {};
+        PowerUpType droppedPowerUp {PowerUpType::None};
     
         Brick(const Color inColor, const int2 inPosition)
             : color{inColor}, location{inPosition}
@@ -75,8 +76,13 @@ namespace breakout
         }
     };
 
-    inline void GetBricksFromStage(const int stage, const breakout::Bounds& fieldBounds, std::vector<Brick*>& bricks, int& bricksToClear)
-    {
+    inline void GetBricksFromStage(
+        const int stage,
+        const Bounds& fieldBounds,
+        std::vector<Brick*>& bricks,
+        int& bricksToClear,
+        const float powerupChance = 0.08f
+    ) {
         // Reset return values
         bricks.clear();
         bricksToClear = 0;
@@ -89,6 +95,7 @@ namespace breakout
 
             for (int x = 0; x < static_cast<int>(line.size()); x++)
             {
+                const PowerUpType nextPowerUp = PowerUp::Roll(powerupChance);
                 uint32_t brickXPos = static_cast<int>(fieldBounds.left) + x * BrickData.bricksize.x;
 
                 if (!std::isdigit(line[x])) continue;
@@ -99,6 +106,7 @@ namespace breakout
                 if (color == Color::Silver)
                 {
                     const auto brick = new SilverBrick(stage, {brickXPos, brickYPos});
+                    brick->droppedPowerUp = nextPowerUp;
                     bricks.push_back(brick);
                     bricksToClear++;
                     continue;
@@ -108,11 +116,13 @@ namespace breakout
                 if (color == Color::Gold)
                 {
                     const auto brick = new GoldBrick({brickXPos, brickYPos});
+                    brick->droppedPowerUp = nextPowerUp;
                     bricks.push_back(brick);
                     continue;
                 }
 
                 const auto brick = new Brick(color, {brickXPos, brickYPos});
+                brick->droppedPowerUp = nextPowerUp;
                 bricks.push_back(brick);
                 bricksToClear++;
             }

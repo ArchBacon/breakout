@@ -10,8 +10,6 @@
 #include "window.hpp"
 #include "rendering/font.hpp"
 
-
-
 template<typename T>
 concept GameStateType = std::derived_from<T, engine::GameState>;
 

@@ -9,12 +9,14 @@
 #include "breakout/objects/brick.hpp"
 #include "breakout/objects/paddle.hpp"
 #include "breakout/objects/player.hpp"
+#include "breakout/objects/powerup.hpp"
 #include "core/engine.hpp"
 
 namespace breakout
 {
     class Gameplay final : public Level
     {
+    public:
         std::array<std::shared_ptr<engine::Image>, 4> backgrounds
         {
             Engine.Renderer().CreateImage("assets/images/background_01.png"),
@@ -24,6 +26,8 @@ namespace breakout
         };
         std::vector<Brick*> bricks {};
         int bricksToClear {0};
+
+        std::vector<std::shared_ptr<PowerUp>> powerups {};
         
         std::shared_ptr<engine::Image> scoreText {nullptr};
         std::shared_ptr<engine::Image> score {nullptr};
@@ -67,6 +71,8 @@ namespace breakout
         void HandleBallLost(const Ball& ball);
         void HandleBallWallBounces();
         void HandleBallPaddleBounces();
+        void HandlePowerUpPaddlePickups();
         void HandleBallBrickBounces();
+        void SpawnPowerUp(PowerUpType type, int2 location);
     };
 }

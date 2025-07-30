@@ -37,6 +37,11 @@ void breakout::Gameplay::BeginPlay()
 void breakout::Gameplay::Tick(const float deltaTime)
 {
     if (!player.alive) return;
+
+    for (const auto& powerup : powerups)
+    {
+        powerup->Update(deltaTime);
+    } 
     
     // Update player location
     paddle.Update(deltaTime);
@@ -66,6 +71,7 @@ void breakout::Gameplay::Tick(const float deltaTime)
     HandleBallWallBounces();
     HandleBallPaddleBounces();
     HandleBallBrickBounces();
+    HandlePowerUpPaddlePickups();
 }
 
 void breakout::Gameplay::Draw()
@@ -87,7 +93,17 @@ void breakout::Gameplay::Draw()
     for (const auto& brick : bricks)
     {
         Engine.Renderer().Draw(brick->sprite, brick->location);
-    } 
+    }
+
+    // Draw power ups
+    for (const auto& powerup : powerups)
+    {
+        if (!powerup->active)
+        {
+            powerup->Animate();
+            Engine.Renderer().Draw(powerup->shadow, powerup->location);
+        }
+    }
     
     // Draw ball(s)
     for (auto& ball : balls)
@@ -163,6 +179,9 @@ void breakout::Gameplay::OnGameEnded()
 
 void breakout::Gameplay::ReloadStage()
 {
+    // Remove all powerups the lazy way
+    powerups.clear();
+    
     // Reset balls
     balls.clear();
     Ball ball {};
@@ -334,7 +353,23 @@ void breakout::Gameplay::HandleBallPaddleBounces()
 
             Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
         }
-    } 
+    }
+}
+
+void breakout::Gameplay::HandlePowerUpPaddlePickups()
+{
+    for (const auto& powerup : powerups)
+    {
+        if (powerup->active) continue; // No need to check for bounds, it's not in the level
+        if (Bounds::Overlap(powerup->bounds, powerup->location, paddle.bounds, paddle.location))
+        {
+            Engine.GameState<BreakoutGameState>().score += powerup->score;
+            score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill((int)Engine.GameState<BreakoutGameState>().score, 5));
+            powerup->OnBegin();
+
+            Engine.Audio().Play("assets/audio/powerup.wav");
+        }
+    }
 }
 
 /** +--------------------+ */
@@ -407,12 +442,15 @@ void breakout::Gameplay::HandleBallBrickBounces()
         // Handle the hit brick if one was found
         if (hitBrickIt != bricks.end())
         {
-            auto& hitBrick = *hitBrickIt;
+            const auto& hitBrick = *hitBrickIt;
             
             hitBrick->health--;
             if (hitBrick->health == 0)
             {
+                SpawnPowerUp(hitBrick->droppedPowerUp, hitBrick->location);
+                
                 Engine.GameState<BreakoutGameState>().score += hitBrick->score;
+                score = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill((int)Engine.GameState<BreakoutGameState>().score, 5));
                 bricksToClear--;
                 
                 // Remove brick (unique_ptr handles deletion automatically)
@@ -426,5 +464,21 @@ void breakout::Gameplay::HandleBallBrickBounces()
 
             Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
         }
+    }
+}
+
+void breakout::Gameplay::SpawnPowerUp(const PowerUpType type, const int2 location)
+{
+    switch (type)
+    {
+    case PowerUpType::ExtraLife:
+        {
+            const auto power = std::make_shared<PowerExtraLife>(player);
+            power->location = location;
+            power->onBeginCallback = [&]() { lives = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(player.extraLives, 2)); };
+            powerups.push_back(power);
+        }
+        break;
+    default: break;
     }
 }

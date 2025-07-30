@@ -1,0 +1,100 @@
+﻿#pragma once
+
+#include <memory>
+#include <random>
+
+#include "breakout/collision.hpp"
+#include "breakout/fonts/power_font.hpp"
+#include "core/engine.hpp"
+#include "core/types.hpp"
+#include "rendering/image.hpp"
+#include "utils/timer.hpp"
+
+namespace breakout
+{
+    struct PowerUp;
+    template<typename T>
+    concept FontType = std::derived_from<T, PowerFont>;
+
+    struct Player;
+
+    enum class PowerUpType
+    {
+        None,
+        ExtraLife,
+        MAX__,
+    };
+    
+    struct PowerUp
+    {
+        std::vector<std::shared_ptr<engine::Image>> sprites {};
+        std::shared_ptr<engine::Image> shadow {
+            Engine.Renderer().CreateImage("assets/images/power_shadow.png"),
+        };
+        float2 location = {0.0f, 0.0f};
+        float2 direction = {0.0f, 1.0f}; // Default direction is straight down
+        float speed {100.f};
+        float duration {-1.0f}; // Duration in seconds (-1 for infinite)
+        float animationSpeed {8.0f}; // Frames per second
+        engine::Timer animationTimer {};
+        engine::Timer powerTimer {};
+        int animationIndex {0};
+        uint8_t score {250};
+        
+    protected:
+        std::function<void()> internalBeginCallback {};
+        std::function<void()> internalEndCallback {};
+    public:
+        std::function<void()> onBeginCallback {};
+        std::function<void()> onEndCallback {};
+
+    public:
+        bool active {false};
+        Bounds bounds {};
+
+        explicit PowerUp();
+        
+        void OnBegin();
+        void OnEnd() const;
+        void Update(float deltaTime);
+        void Animate();
+
+        template <FontType T>
+        void PopulateSprites();
+
+        /**
+         * @param chance chance to roll a powerup that is not `None` between 0.0f and 1.0f
+         */
+        static PowerUpType Roll(const float chance)
+        {
+            static std::random_device rd;
+            static std::mt19937 gen(rd());
+            static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    
+            if (dist(gen) <= chance)
+            {
+                // Random powerup type (excluding None and MAX__)
+                static std::uniform_int_distribution<int> powerupDist(1, static_cast<int>(PowerUpType::MAX__) - 1);
+                return static_cast<PowerUpType>(powerupDist(gen));
+            }
+    
+            return PowerUpType::None;
+        }
+    };
+
+    template <FontType T>
+    void PowerUp::PopulateSprites()
+    {
+        sprites.clear();
+        sprites.reserve(8);
+        for (int i = 0; i < 8; i++) {
+            sprites.push_back(Engine.GetFont<T>()->CreateText(std::to_string(i)));
+        }
+    }
+    
+    // Gain an extra life
+    struct PowerExtraLife : PowerUp
+    {
+        PowerExtraLife(Player& player);
+    };
+}
