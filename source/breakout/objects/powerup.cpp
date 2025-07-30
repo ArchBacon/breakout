@@ -169,3 +169,28 @@ breakout::PowerEnlarge::PowerEnlarge(Paddle& paddle)
         };
     };
 }
+
+breakout::PowerGravity::PowerGravity(std::vector<Ball>& balls)
+    : balls(balls)
+{
+    PopulateSprites<PowerDisruptFont>();
+    type = PowerUpType::Gravity;
+    duration = 5.f;
+}
+
+void breakout::PowerGravity::Update(const float deltaTime)
+{
+    PowerUp::Update(deltaTime);
+
+    if (active && !consumed)
+    {
+        for (auto& ball : balls)
+        {
+            // Rotate direction towards down vector
+            float2 down = {0.0f, 1.0f};
+            const float gravityStrength = 90.0f * deltaTime; // degrees per second
+
+            ball.direction = glm::normalize(glm::mix(ball.direction, down, gravityStrength / 90.f));
+        }
+    }
+}

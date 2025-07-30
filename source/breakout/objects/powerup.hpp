@@ -30,6 +30,7 @@ namespace breakout
         Slow,
         Break,
         Enlarge,
+        Gravity,
         MAX__,
     };
     
@@ -67,7 +68,7 @@ namespace breakout
         
         void OnBegin();
         void OnEnd();
-        void Update(float deltaTime);
+        virtual void Update(float deltaTime);
         void Animate();
 
         template <FontType T>
@@ -126,5 +127,15 @@ namespace breakout
     {
         int ogWidth {0};
         PowerEnlarge(Paddle& paddle);
+    };
+
+    // Balls are affected by gravity
+    struct PowerGravity : PowerUp
+    {
+        std::vector<Ball>& balls;
+        
+        PowerGravity(std::vector<Ball>& balls);
+
+        void Update(float deltaTime) override;
     };
 }
