@@ -120,6 +120,21 @@ void breakout::Gameplay::KeyDown(const uint32_t key)
         PrevStage();
     }
 #endif
+
+    if (key == SDLK_ESCAPE)
+    {
+        Engine.Audio().Play("assets/audio/pickup1.wav");
+        RequestLevelChange(LevelType::MainMenu);
+    }
+
+    // Shoot
+    if (key == SDLK_W || key == SDLK_UP || key == SDLK_SPACE || key == SDLK_RETURN)
+    {
+        for (auto& ball : balls)
+        {
+            ball.isAttachedToPaddle = false;
+        }
+    }
 }
 
 void breakout::Gameplay::KeyPressed(const uint32_t key)
@@ -132,15 +147,6 @@ void breakout::Gameplay::KeyPressed(const uint32_t key)
     if (key == SDLK_D || key == SDLK_RIGHT)
     {
         paddle.direction = {1, 0};
-    }
-
-    // Shoot
-    if (key == SDLK_W || key == SDLK_UP || key == SDLK_SPACE)
-    {
-        for (auto& ball : balls)
-        {
-            ball.isAttachedToPaddle = false;
-        }
     }
 }
 
@@ -254,6 +260,8 @@ void breakout::Gameplay::HandleBallWallBounces()
 {
     for (auto& ball : balls)
     {
+        if (ball.isAttachedToPaddle) continue;
+        
         // Left wall
         if (ball.bounds.Min().x + ball.location.x <= fieldBounds.left)
         {
@@ -338,6 +346,8 @@ void breakout::Gameplay::HandleBallBrickBounces()
 {
     for (auto& ball : balls)
     {
+        if (ball.isAttachedToPaddle) continue;
+        
         auto hitBrickIt = bricks.end();
     
         // Find the first brick that collides with the ball

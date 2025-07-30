@@ -2,6 +2,7 @@
 
 #include "breakout/breakout_gamestate.hpp"
 #include "breakout/collision.hpp"
+#include "breakout/fonts/arkanoid_font.hpp"
 #include "breakout/fonts/brick_font.hpp"
 #include "core/engine.hpp"
 #include "core/fileio.hpp"
@@ -37,14 +38,22 @@ namespace breakout
         std::shared_ptr<engine::Image> sprite {nullptr};
         int8_t health {1};
         int2 location {0, 0};
-        Bounds bounds {.left = 0, .top = 0, .right = 32, .bottom = 16}; // 32x16 size brick
+        Bounds bounds {};
     
         Brick(const Color inColor, const int2 inPosition)
             : color{inColor}, location{inPosition}
         {
             auto colorID = static_cast<unsigned>(inColor);
             score = 50 + (10 * colorID);
-            sprite = Engine.GetFont<breakout::BrickFont>()->CreateText(std::to_string(colorID));
+            sprite = Engine.GetFont<BrickFont>()->CreateText(std::to_string(colorID));
+
+            bounds = {
+                .left = 0,
+                .top = 0,
+                .right = static_cast<float>(sprite->width),
+                .bottom = static_cast<float>(sprite->height)
+            };
+            BrickData.bricksize = {bounds.right, bounds.bottom};
         }
     };
 

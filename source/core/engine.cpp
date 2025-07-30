@@ -44,12 +44,6 @@ void engine::Engine::Run()
                 Shutdown();
             }
 
-            // Exit engine when [ESC] is pressed
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE)
-            {
-                Shutdown();
-            }
-
             PassInputEventsToGame(event);
         }
 

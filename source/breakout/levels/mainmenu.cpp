@@ -60,4 +60,9 @@ void breakout::MainMenu::KeyDown(const uint32_t key)
         Engine.Audio().Play("assets/audio/pickup1.wav");
         menu.Click();
     }
+
+    if (key == SDLK_ESCAPE)
+    {
+        RequestLevelChange(LevelType::Exit);
+    }
 }

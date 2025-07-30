@@ -32,7 +32,7 @@ void breakout::Settings::Draw()
 
 void breakout::Settings::KeyDown(const uint32_t key)
 {
-    if (key == SDLK_SPACE || key == SDLK_RETURN)
+    if (key == SDLK_SPACE || key == SDLK_RETURN || key == SDLK_ESCAPE)
     {
         Engine.Audio().Play("assets/audio/pickup1.wav");
         RequestLevelChange(LevelType::MainMenu);

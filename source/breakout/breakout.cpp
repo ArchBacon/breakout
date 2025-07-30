@@ -26,8 +26,7 @@ breakout::Breakout::Breakout()
     // Update game state to store variables over app lifetime
     Engine.SetGameState<BreakoutGameState>();
 
-    // TODO: change back to main menu
-    level = std::make_unique<Gameplay>();
+    level = std::make_unique<MainMenu>();
     level->SetLevelChangeCallback([&](const LevelType type) { ChangeLevel(type); });
 }
 
