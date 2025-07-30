@@ -12,8 +12,6 @@ namespace breakout
         Settings,
         Controls,
         GamePlay,
-        GameOver,
-        GameEnd,
         Exit,
     };
     

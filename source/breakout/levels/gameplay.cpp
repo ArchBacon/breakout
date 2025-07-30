@@ -11,6 +11,19 @@ void breakout::Gameplay::BeginPlay()
 {
     GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear);
 
+    gameOverText = Engine.GetFont<ArkanoidFont>()->CreateText("Game Over");
+    gameEndText = Engine.GetFont<ArkanoidFont>()->CreateText("Victory");
+    overlay = Engine.Renderer().CreateImage("assets/images/dark_overlay.png");
+    textLoc = {
+        Engine.Window().Width() / 2 - gameOverText->width / 2,
+        Engine.Window().Height()
+    };
+    textEndLoc = {
+        Engine.Window().Width() / 2 - gameOverText->width / 2,
+        Engine.Window().Height() / 3 * 2
+    };
+    scoreEndHeight = Engine.Window().Height() / 2;
+
     stageText = Engine.GetFont<OtherFont>()->CreateText("Stage");
     stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
     scoreText = Engine.GetFont<OtherFont>()->CreateText("Score");
@@ -36,7 +49,16 @@ void breakout::Gameplay::BeginPlay()
 
 void breakout::Gameplay::Tick(const float deltaTime)
 {
-    if (!player.alive) return;
+    if (!player.alive || gameCompleted)
+    {
+        scoreHeight += textSpeed * deltaTime;
+        scoreHeight = glm::min(scoreHeight, scoreEndHeight);
+        
+        textLoc.y -= textSpeed * deltaTime;
+        textLoc.y = glm::max(textLoc.y, textEndLoc.y);
+        
+        return;
+    }
 
     for (const auto& powerup : powerups)
     {
@@ -80,12 +102,9 @@ void breakout::Gameplay::Draw()
     // Draw background
     Engine.Renderer().Draw(backgrounds[GetStageBackgroundIndex()], {0, 32});
 
-    // Draw score and stage
+    // Draw lives and stage
     Engine.Renderer().Draw(stageText, {Engine.Window().Width() / 6 - stageText->width / 2, 6});
     Engine.Renderer().Draw(stage, {Engine.Window().Width() / 6 - stage->width / 2, 18});
-    
-    Engine.Renderer().Draw(scoreText, {Engine.Window().Width() / 2 - scoreText->width / 2, 6});
-    Engine.Renderer().Draw(score, {Engine.Window().Width() / 2 - score->width / 2, 18});
     
     Engine.Renderer().Draw(livesText, {Engine.Window().Width() / 6 * 5 - stageText->width / 2, 6});
     Engine.Renderer().Draw(lives, {Engine.Window().Width() / 6 * 5 - stage->width / 2, 18});
@@ -120,6 +139,22 @@ void breakout::Gameplay::Draw()
 
     // Draw paddle
     Engine.Renderer().Draw(paddle.sprites, paddle.location);
+
+    if (!player.alive)
+    {
+        Engine.Renderer().Draw(overlay, {0, 0});
+        Engine.Renderer().Draw(gameOverText, textLoc);
+    }
+
+    if (gameCompleted)
+    {
+        Engine.Renderer().Draw(overlay, {0, 0});
+        Engine.Renderer().Draw(gameEndText, textLoc);
+    }
+
+    // draw score
+    Engine.Renderer().Draw(scoreText, {Engine.Window().Width() / 2 - scoreText->width / 2, scoreHeight - 12});
+    Engine.Renderer().Draw(score, {Engine.Window().Width() / 2 - score->width / 2, scoreHeight});
 }
 
 void breakout::Gameplay::KeyDown(const uint32_t key)
@@ -136,7 +171,7 @@ void breakout::Gameplay::KeyDown(const uint32_t key)
     }
 #endif
 
-    if (key == SDLK_ESCAPE)
+    if (!player.alive || gameCompleted || key == SDLK_ESCAPE)
     {
         Engine.Audio().Play("assets/audio/pickup1.wav");
         RequestLevelChange(LevelType::MainMenu);
@@ -209,7 +244,22 @@ void breakout::Gameplay::ReloadStage()
 void breakout::Gameplay::NextStage()
 {
     auto& stageRef = Engine.GameState<BreakoutGameState>().stage;
-    stageRef = static_cast<uint8_t>(glm::min(stageRef + 1, 5));
+    if (stageRef == stageCount)
+    {
+        gameCompleted = true;
+        textLoc = {
+            Engine.Window().Width() / 2 - gameEndText->width / 2,
+            Engine.Window().Height()
+        };
+        textEndLoc = {
+            Engine.Window().Width() / 2 - gameEndText->width / 2,
+            Engine.Window().Height() / 3 * 2
+        };
+        return;
+    }
+    
+    stageRef = glm::min(++stageRef, stageCount);
+    
     ReloadStage();
 }
 

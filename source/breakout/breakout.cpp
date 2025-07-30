@@ -51,12 +51,6 @@ void breakout::Breakout::ChangeLevel(const LevelType newLevelType)
     case LevelType::GamePlay:
         level = std::make_unique<Gameplay>();
         break;
-    case LevelType::GameOver:
-        LogGame->Warn("GameOver not implemented. Exiting...");
-        return;
-    case LevelType::GameEnd:
-        LogGame->Warn("GameEnd not implemented. Exiting...");
-        return;
     case LevelType::Exit:
         Engine.Shutdown();
         return;

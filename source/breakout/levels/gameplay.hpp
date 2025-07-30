@@ -17,6 +17,19 @@ namespace breakout
     class Gameplay final : public Level
     {
     public:
+        uint8_t stageCount = 5;
+        
+        std::shared_ptr<engine::Image> gameOverText {nullptr};
+        std::shared_ptr<engine::Image> gameEndText {nullptr};
+        std::shared_ptr<engine::Image> overlay {nullptr};
+        float2 textLoc {0, 0};
+        float2 textEndLoc {0, 0};
+        float textSpeed {325.f / 2.f};
+
+        float scoreHeight = 18;
+        float scoreEndHeight = 0;
+        bool gameCompleted {false};
+        
         std::array<std::shared_ptr<engine::Image>, 4> backgrounds
         {
             Engine.Renderer().CreateImage("assets/images/background_01.png"),
