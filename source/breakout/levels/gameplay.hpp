@@ -22,7 +22,7 @@ namespace breakout
             Engine.Renderer().CreateImage("assets/images/background_03.png"),
             Engine.Renderer().CreateImage("assets/images/background_04.png"),
         };
-        std::vector<std::unique_ptr<Brick>> bricks {};
+        std::vector<Brick*> bricks {};
         int bricksToClear {0};
         
         std::shared_ptr<engine::Image> scoreText {nullptr};
@@ -53,15 +53,20 @@ namespace breakout
         void Tick(float deltaTime) override;
         void Draw() override;
 
-        void KeyPressed(const uint32_t key) override;
+        void KeyDown(uint32_t key) override;
+        void KeyPressed(uint32_t key) override;
 
         [[nodiscard]] int GetStageBackgroundIndex() const;
 
         void OnGameEnded();
+        void ReloadStage();
+        void NextStage();
+        void PrevStage();
         
         void CalculateBallStartDirection(Ball& ball) const;
         void HandleBallLost(const Ball& ball);
         void HandleBallWallBounces();
         void HandleBallPaddleBounces();
+        void HandleBallBrickBounces();
     };
 }

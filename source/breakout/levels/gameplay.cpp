@@ -9,12 +9,7 @@
 
 void breakout::Gameplay::BeginPlay()
 {
-    GetBricksFromStage(
-        Engine.GameState<BreakoutGameState>().stage,
-        fieldBounds,
-        bricks,
-        bricksToClear
-    );
+    GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear);
 
     stageText = Engine.GetFont<OtherFont>()->CreateText("Stage");
     stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
@@ -68,9 +63,9 @@ void breakout::Gameplay::Tick(const float deltaTime)
         }
     }
 
-    // TODO: Handle collision and bounces
     HandleBallWallBounces();
     HandleBallPaddleBounces();
+    HandleBallBrickBounces();
 }
 
 void breakout::Gameplay::Draw()
@@ -112,6 +107,21 @@ void breakout::Gameplay::Draw()
     Engine.Renderer().Draw(paddle.sprites, paddle.location);
 }
 
+void breakout::Gameplay::KeyDown(const uint32_t key)
+{
+#ifdef _DEBUG
+    // Cycle levels
+    if (key == SDLK_RIGHTBRACKET)
+    {
+        NextStage();
+    }
+    if (key == SDLK_LEFTBRACKET)
+    {
+        PrevStage();
+    }
+#endif
+}
+
 void breakout::Gameplay::KeyPressed(const uint32_t key)
 {
     // Move paddle
@@ -143,6 +153,48 @@ int breakout::Gameplay::GetStageBackgroundIndex() const
 void breakout::Gameplay::OnGameEnded()
 {
     Engine.Audio().Play("assets/audio/game_over.wav");
+}
+
+void breakout::Gameplay::ReloadStage()
+{
+    // Reset balls
+    balls.clear();
+    Ball ball {};
+    ball.isAttachedToPaddle = true;
+    ball.relAttachlocation = {
+        paddle.bounds.Max().x / 2 - ball.bounds.Max().x / 2,
+        0
+    };
+    balls.push_back(ball);
+
+    // Populate bricks
+    GetBricksFromStage(Engine.GameState<BreakoutGameState>().stage, fieldBounds, bricks, bricksToClear);
+
+    // Update sprites
+    stage = Engine.GetFont<OtherAltFont>()->CreateText(ZeroFill(Engine.GameState<BreakoutGameState>().stage, 2));
+
+    // Reset player position
+    paddle.location = {
+        static_cast<float>(Engine.Window().Width()) / 2.f - paddle.bounds.Max().x / 2,
+        464
+    };
+
+    // Play Start level sound
+    Engine.Audio().Play("assets/audio/round_start.wav");
+}
+
+void breakout::Gameplay::NextStage()
+{
+    auto& stageRef = Engine.GameState<BreakoutGameState>().stage;
+    stageRef = static_cast<uint8_t>(glm::min(stageRef + 1, 5));
+    ReloadStage();
+}
+
+void breakout::Gameplay::PrevStage()
+{
+    auto& stageRef = Engine.GameState<BreakoutGameState>().stage;
+    stageRef = static_cast<uint8_t>(glm::max(stageRef - 1, 1));
+    ReloadStage();
 }
 
 void breakout::Gameplay::CalculateBallStartDirection(Ball& ball) const
@@ -275,4 +327,94 @@ void breakout::Gameplay::HandleBallPaddleBounces()
             Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
         }
     } 
+}
+
+/** +--------------------+ */
+/** + Based on AI Answer + */
+/** + I don't like this  + */
+/** + But it works...    + */
+/** +--------------------+ */
+void breakout::Gameplay::HandleBallBrickBounces()
+{
+    for (auto& ball : balls)
+    {
+        auto hitBrickIt = bricks.end();
+    
+        // Find the first brick that collides with the ball
+        for (auto it = bricks.begin(); it != bricks.end(); ++it)
+        {
+            if (Bounds::Overlap(ball.bounds, ball.location, (*it)->bounds, (*it)->location))
+            {
+                hitBrickIt = it;
+                
+                // Calculate actual bounds for overlap calculation
+                const float4 brickBounds = {
+                    static_cast<float>((*it)->location.x),
+                    static_cast<float>((*it)->location.y),
+                    static_cast<float>((*it)->location.x + BrickData.bricksize.x),
+                    static_cast<float>((*it)->location.y + BrickData.bricksize.y)
+                };
+                
+                const float4 ballBounds = {
+                    ball.location.x,
+                    ball.location.y,
+                    ball.location.x + ball.bounds.Max().x,
+                    ball.location.y + ball.bounds.Max().y
+                };
+                
+                // Calculate overlaps
+                float overlapLeft = ballBounds.z - brickBounds.x;   // ball right - brick left
+                float overlapRight = brickBounds.z - ballBounds.x;  // brick right - ball left
+                float overlapTop = ballBounds.w - brickBounds.y;    // ball bottom - brick top
+                float overlapBottom = brickBounds.w - ballBounds.y; // brick bottom - ball top
+                
+                float minOverlap = std::min(std::min(overlapLeft, overlapRight), 
+                                          std::min(overlapTop, overlapBottom));
+                
+                // Determine collision side and bounce
+                if (minOverlap == overlapLeft || minOverlap == overlapRight) {
+                    ball.direction.x = -ball.direction.x;
+                    // Move ball out of collision zone
+                    if (minOverlap == overlapLeft) {
+                        ball.location.x = brickBounds.x - ball.bounds.Max().x - 1.0f;
+                    } else {
+                        ball.location.x = brickBounds.z + 1.0f;
+                    }
+                } else {
+                    ball.direction.y = -ball.direction.y;
+                    // Move ball out of collision zone
+                    if (minOverlap == overlapTop) {
+                        ball.location.y = brickBounds.y - ball.bounds.Max().y - 1.0f;
+                    } else {
+                        ball.location.y = brickBounds.w + 1.0f;
+                    }
+                }
+                
+                break;
+            }
+        }
+        
+        // Handle the hit brick if one was found
+        if (hitBrickIt != bricks.end())
+        {
+            auto& hitBrick = *hitBrickIt;
+            
+            hitBrick->health--;
+            if (hitBrick->health == 0)
+            {
+                Engine.GameState<BreakoutGameState>().score += hitBrick->score;
+                bricksToClear--;
+                
+                // Remove brick (unique_ptr handles deletion automatically)
+                bricks.erase(hitBrickIt);
+                
+                if (bricksToClear <= 0)
+                {
+                    NextStage();
+                }
+            }
+
+            Engine.Audio().Play("assets/audio/arkanoid_hit.wav");
+        }
+    }
 }
